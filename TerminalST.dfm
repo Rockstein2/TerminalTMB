@@ -274,6 +274,7 @@ object Form1: TForm1
       ShowHint = False
       TabOrder = 1
       OnChange = MainStrCmdChange
+      OnClick = MainStrCmdClick
       OnKeyPress = MainStrCmdKeyPress
       OnKeyUp = MainStrCmdKeyUp
       OnMouseMove = MainStrCmdMouseMove

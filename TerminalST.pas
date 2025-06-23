@@ -1090,7 +1090,9 @@ type
     procedure Edt2Change(Sender: TObject);
     procedure EdtBefSym1Change(Sender: TObject);
     procedure EdtBefSym2Change(Sender: TObject);
-    procedure EdtBefSymbol1DecExit(Sender: TObject);
+
+    //procedure EdtBefSymbol1DecExit(Sender: TObject);
+    
     procedure Edt2Exit(Sender: TObject);
     procedure EdtBefSymbol1DecKeyPress(Sender: TObject; var Key: Char);
     procedure Edt2KeyPress(Sender: TObject; var Key: Char);
@@ -1195,6 +1197,7 @@ type
     procedure SecondWindowAddChange(Sender: TObject);
     procedure rb1Click(Sender: TObject);
     procedure tmrDelayTimer(Sender: TObject);
+    procedure MainStrCmdClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -2626,12 +2629,12 @@ var
   isCmdCfg_1 : Boolean;
   isCmdCfg_2 : Boolean;
 begin
-  VersionInfo := 'TerminalTMB v7.137b';
-  DateInfo    := '11.04.2025';
+  VersionInfo := 'TerminalTMB v7.139b';
+  DateInfo    := '22.06.2025';
   //URL         := 'https://zen.yandex.ru/tehnozet2';
   //DateInfo    := 'Em@il: Ivan160508@yandex.ru, MCard: 5586 2000 8623 2177';
   EMail       := 'Ivan160508@yandex.ru';
-  //EMail       := 'Ivan160508@yandex.ru, MIR: 2202 2062 7669 8490';
+  EMail       := 'Ivan160508@yandex.ru, MIR: 2202 2062 7669 8490';
   isFormAnsSensors := False;
   isUseParserHEX := False;
   isUseParserASCII := False;
@@ -5943,7 +5946,9 @@ begin
   FormParserASCII.SaveCfg;
 
   if isAddListCmd then
-    Form7.SaveCfg;
+    Form7.SaveCfg(ExtractFilePath(Application.ExeName) + 'AddCmd');
+
+
 
   isReqSaveCmdList := true;
   SaveCmdListsInFile;
@@ -10697,11 +10702,6 @@ begin
   (Sender as TEdit).Hint := 'Dec: ' + IntToStr(SepBefSymbol2);
 end;
 
-procedure TForm1.EdtBefSymbol1DecExit(Sender: TObject);
-begin
-  (Sender as TEdit).Color := clWindow;
-  (Sender as TEdit).Text  := IntToStr(SepBefSymbol1);
-end;
 
 procedure TForm1.Edt2Exit(Sender: TObject);
 begin
@@ -12069,6 +12069,12 @@ procedure TForm1.tmrDelayTimer(Sender: TObject);
 begin
   (Sender as TTimer).Enabled := False;
   TimerPeriod.Enabled := True;
+end;
+
+procedure TForm1.MainStrCmdClick(Sender: TObject);
+begin
+  if BtOptConn.Tag = 1 then
+    BtOptConn.Click;
 end;
 
 end.

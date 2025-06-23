@@ -274,6 +274,10 @@ type
     btn3: TButton;
     btn4: TButton;
     chk1: TCheckBox;
+    Bt1: TButton;
+    Bt2: TButton;
+    OpenCFG: TOpenDialog;
+    dlgSaveCfg: TSaveDialog;
     procedure FormCreate(Sender: TObject);
     procedure RBASCIIClick(Sender: TObject);
     procedure RBHEXClick(Sender: TObject);
@@ -285,7 +289,7 @@ type
     procedure RBModeManualClick(Sender: TObject);
     procedure CheckBox33Click(Sender: TObject);
     procedure TimerSendTimer(Sender: TObject);
-    procedure SaveCfg;
+    procedure SaveCfg(Name : string);
     function  GetAddStr : string;
     procedure UpdateListCmd(var List : integer);
     procedure ListPrevClick(Sender: TObject);
@@ -359,6 +363,8 @@ type
     procedure btn4Click(Sender: TObject);
     procedure rb1Click(Sender: TObject);
     procedure chk1Click(Sender: TObject);
+    procedure Bt1Click(Sender: TObject);
+    procedure Bt2Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -387,6 +393,9 @@ var
   isCopyList : Boolean;
   ListStart   : integer;
   ListStop    : integer;
+  LoadStart   : integer;
+  SaveStart    : integer;
+
 
   NumCmdNext  : integer;
   CmdList     : array[1..CNT_LIST] of TCmdList;
@@ -857,7 +866,8 @@ procedure TForm7.FormCreate(Sender: TObject);
     PosOneTime     := chk1.Left;
     WidthStatText  := StatText.Width;
     WidthListLists := ListGroup.Width;
-
+    LoadStart      := Bt1.Left;
+    SaveStart      := Bt2.Left;
 
 
 
@@ -1341,7 +1351,7 @@ begin
     end;
 end;
 
-procedure TForm7.SaveCfg;
+procedure TForm7.SaveCfg(Name : string);
 var
   List : integer;
   isWrite : boolean;
@@ -1393,7 +1403,7 @@ begin
 
       if isWrite then
         begin
-          AssignFile(ConfigFileAdd, ExtractFilePath(Application.ExeName) + 'AddCmd');
+          AssignFile(ConfigFileAdd, Name);
           ReWrite(ConfigFileAdd);
           for List := 1 to CNT_LIST do
             Cfg.CmdList[List] := CmdList[List];
@@ -1407,7 +1417,7 @@ begin
 
           Write(ConfigFileAdd, Cfg);
           CloseFile(ConfigFileAdd);
-        end;  
+        end;
     end;
     if Form1.WindowState = wsMinimized then
       Form1.WindowState := wsMaximized;
@@ -1884,7 +1894,7 @@ begin
   Button33.Caption := '>';
   TerminalST.isAddListCmd := False;
   TerminalST.Form1.BtListCmd.Font.Style := [];
-  SaveCfg;
+  SaveCfg(ExtractFilePath(Application.ExeName) + 'AddCmd');
 end;
 
 procedure TForm7.WriteTailAll;
@@ -2214,6 +2224,8 @@ begin
   ListGroup.Width  := WidthListLists + deltaWidth;
   ListTail.Left    := EditTailAll.Left;
   chk1.Left        := PosOneTime     + deltaWidth;
+  Bt1.Left         := LoadStart      + deltaWidth;
+  Bt2.Left         := SaveStart      + deltaWidth;
   end;
 
 procedure TForm7.FormClick(Sender: TObject);
@@ -2390,6 +2402,121 @@ end;
 procedure TForm7.chk1Click(Sender: TObject);
 begin
   isOneTime := (Sender as TCheckBox).Checked;
+end;
+
+procedure TForm7.Bt1Click(Sender: TObject);
+var
+  ConfigFile : File of TCfg;
+  FileName : string;
+  isErr    : Boolean;
+  ActList  : Integer;
+begin
+  if OpenCFG.Execute then
+    begin
+      FileName := OpenCFG.FileName;
+      AssignFile(ConfigFile, FileName);
+      isErr := False;
+      if (FileExists(FileName) and (Get_File_Size(FileName, True) = 27508752)) then
+        begin
+          NumList := 1;
+          try
+            AssignFile(ConfigFile, FileName);
+            Reset(ConfigFile);
+            Read(ConfigFile, Cfg);
+            CloseFile(ConfigFile);
+          except
+            isErr := True;
+          end;
+
+          while (NumList <= CNT_LIST) and (not isErr) do
+            begin
+              CmdList[NumList] := Cfg.CmdList[NumList];
+              isErr := CmdList[NumList].Marker <> MarkerCfg;
+              if CmdList[NumList].isActive then
+                begin
+                  ActList := NumList;
+                end;
+              inc(NumList);
+            end;
+        end
+      else
+        isErr := True;
+
+      NumList := ActList;
+
+      if not isErr then
+        begin
+          if Cfg.isMan then RBModeManual.Checked := true
+          else if Cfg.isAuto then RBModeAuto.Checked := true;
+
+          isRound.Checked   := Cfg.isRound;
+          isAllList.Checked := Cfg.isAllList;
+
+          LStart.Enabled    := Cfg.isAllList;
+          LEnd.Enabled     := Cfg.isAllList;
+          if Cfg.isAllList then
+            begin
+              LStart.Color := clWindow;
+              LEnd.Color := clWindow;
+            end;
+
+          LStart.Text       := IntToStr(Cfg.ListStart);
+          LEnd.Text         := IntToStr(Cfg.ListStop);
+          ListStart         := Cfg.ListStart;
+          ListStop          := Cfg.ListStop;
+
+          UpdListGroup;
+
+          NumList := ActList;
+          UpdateListCmd(NumList);
+
+          EditTOAll.Enabled   := RBModeAuto.Checked;
+          if EditTOAll.Enabled then
+            EditTOAll.Color := clWindow
+          else
+            EditTOAll.Color := Form7.Color;
+          BT_TO.Enabled       := RBModeAuto.Checked;
+          Form7.Caption := 'Command List ' + ' [ ' + FileName + ' ] ';
+        end
+      else
+        ShowMessage('Incorrect configuration file');
+    end;
+end;
+
+
+procedure SaveCfgInFile(Name : string);
+var
+  List : integer;
+  numCmd  : integer;
+  ConfigFile : File of TCfg;
+begin
+  while (Form1.GetIsSendingData) do begin sleep(WAIT_SEND); end;
+  AssignFile(ConfigFile, Name);
+  ReWrite(ConfigFile);
+  for List := 1 to CNT_LIST do
+    Cfg.CmdList[List] := CmdList[List];
+
+  Cfg.isMan     := Form7.RBModeManual.Checked;
+  Cfg.isAuto    := Form7.RBModeAuto.Checked  ;
+  Cfg.isRound   := Form7.isRound.Checked     ;
+  Cfg.isAllList := Form7.isAllList.Checked   ;
+  Cfg.ListStart := ListStart                 ;
+  Cfg.ListStop  := ListStop                  ;
+
+  Write(ConfigFile, Cfg);
+  CloseFile(ConfigFile);
+end;
+
+procedure TForm7.Bt2Click(Sender: TObject);
+begin
+  if dlgSaveCfg.Execute then
+    begin
+      try
+        SaveCfgInFile(dlgSaveCfg.FileName);
+      except
+        ShowMessage('Error saving configuration file');
+      end;
+    end;
 end;
 
 end.

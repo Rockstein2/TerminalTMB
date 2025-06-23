@@ -1,6 +1,6 @@
 object Form7: TForm7
-  Left = 637
-  Top = 150
+  Left = 575
+  Top = 159
   Width = 867
   Height = 800
   Caption = 'Command List'
@@ -2493,9 +2493,9 @@ object Form7: TForm7
   object ListPrev: TButton
     Left = 712
     Top = 2
-    Width = 65
+    Width = 31
     Height = 21
-    Caption = '<<<'
+    Caption = '<<'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -19
@@ -2506,11 +2506,11 @@ object Form7: TForm7
     OnClick = ListPrevClick
   end
   object ListNext: TButton
-    Left = 776
+    Left = 742
     Top = 2
-    Width = 65
+    Width = 31
     Height = 21
-    Caption = '>>>'
+    Caption = '>>'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -19
@@ -2886,6 +2886,30 @@ object Form7: TForm7
     TabOrder = 179
     OnClick = chk1Click
   end
+  object Bt1: TButton
+    Left = 776
+    Top = 2
+    Width = 33
+    Height = 21
+    Hint = 'Load configuration from file'
+    Caption = 'Load'
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 180
+    OnClick = Bt1Click
+  end
+  object Bt2: TButton
+    Left = 808
+    Top = 2
+    Width = 33
+    Height = 21
+    Hint = 'Save configuration to file'
+    Caption = 'Save'
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 181
+    OnClick = Bt2Click
+  end
   object TimerSend: TTimer
     Enabled = False
     Interval = 5
@@ -2898,5 +2922,14 @@ object Form7: TForm7
     OnTimer = TimerCntTimer
     Left = 782
     Top = 106
+  end
+  object OpenCFG: TOpenDialog
+    Title = 'Open command list configuration file'
+    Left = 570
+    Top = 344
+  end
+  object dlgSaveCfg: TSaveDialog
+    Left = 400
+    Top = 252
   end
 end
