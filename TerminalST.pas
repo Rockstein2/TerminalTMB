@@ -2629,12 +2629,12 @@ var
   isCmdCfg_1 : Boolean;
   isCmdCfg_2 : Boolean;
 begin
-  VersionInfo := 'TerminalTMB v7.139b';
-  DateInfo    := '22.06.2025';
+  VersionInfo := 'TerminalTMB v7.140b';
+  DateInfo    := '22.07.2025';
   //URL         := 'https://zen.yandex.ru/tehnozet2';
   //DateInfo    := 'Em@il: Ivan160508@yandex.ru, MCard: 5586 2000 8623 2177';
   EMail       := 'Ivan160508@yandex.ru';
-  EMail       := 'Ivan160508@yandex.ru, MIR: 2202 2062 7669 8490';
+  //EMail       := 'Ivan160508@yandex.ru, MIR: 2202 2062 7669 8490';
   isFormAnsSensors := False;
   isUseParserHEX := False;
   isUseParserASCII := False;

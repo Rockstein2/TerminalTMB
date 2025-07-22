@@ -907,7 +907,7 @@ begin
               inc(pDG_Cur[i]);
               inc(i_Act_Cur[i]);
             end
-          else
+          else if ItemParam[i].isOutGraph then
             isBtnNext := False;
         end;
 
@@ -985,7 +985,7 @@ begin
           dec(pDG_Cur[i]);
           dec(i_Act_Cur[i]);
         end
-      else
+      else if ItemParam[i].isOutGraph then
         isBtnPrev := False;
 
 

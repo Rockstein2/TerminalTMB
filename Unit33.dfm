@@ -1,6 +1,6 @@
 object FormMultiGraph: TFormMultiGraph
-  Left = 174
-  Top = 282
+  Left = 551
+  Top = 73
   Width = 1935
   Height = 770
   BorderIcons = [biSystemMenu, biMaximize]
