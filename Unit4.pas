@@ -20,7 +20,6 @@ type
     procedure req7Click(Sender: TObject);
     procedure req8Click(Sender: TObject);
     procedure req9Click(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -70,21 +69,6 @@ end;
 procedure TInfo.req9Click(Sender: TObject);
 begin
 ClipBoard.AsText := (Sender as TStaticText).Caption;
-end;
-
-procedure TInfo.FormCreate(Sender: TObject);
-begin
-  if Form1.isMielta = 1 then
-    begin
-      grp1.Height        := 180;
-      Info.Height        := 125 + 90;
-    end;
-  if Form1.isMielta = 2 then
-    begin
-      grp1.Height        := 180;
-      Info.Height        := 125 + 90;
-    end;
-
 end;
 
 end.

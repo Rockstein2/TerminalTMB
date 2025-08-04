@@ -4,7 +4,7 @@ object Info: TInfo
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Info'
-  ClientHeight = 193
+  ClientHeight = 229
   ClientWidth = 565
   Color = clLime
   Font.Charset = DEFAULT_CHARSET
@@ -16,7 +16,6 @@ object Info: TInfo
   Position = poMainFormCenter
   OnActivate = FormActivate
   OnClose = FormClose
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Button1: TButton
@@ -31,7 +30,7 @@ object Info: TInfo
     Left = 2
     Top = 2
     Width = 561
-    Height = 187
+    Height = 223
     Color = clLime
     ParentColor = False
     TabOrder = 1
@@ -72,7 +71,7 @@ object Info: TInfo
       TabOrder = 1
     end
     object req11: TStaticText
-      Left = 4
+      Left = 6
       Top = 60
       Width = 553
       Height = 21
@@ -93,7 +92,7 @@ object Info: TInfo
       Left = 6
       Top = 82
       Width = 549
-      Height = 89
+      Height = 135
       Alignment = taCenter
       Color = clLime
       Ctl3D = False
@@ -106,7 +105,9 @@ object Info: TInfo
         'FREE program. Distributed as is. '
         'The author does not bear any responsibility '
         'for possible direct or indirect damage as a '
-        'result of using this program.')
+        'result of using this program.'
+        ''
+        'https://github.com/Ivan160508/TerminalTMB')
       ParentCtl3D = False
       ParentFont = False
       ReadOnly = True
