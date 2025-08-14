@@ -2629,8 +2629,8 @@ var
   isCmdCfg_1 : Boolean;
   isCmdCfg_2 : Boolean;
 begin
-  VersionInfo := 'TerminalTMB v7.141b';
-  DateInfo    := '04.08.2025';
+  VersionInfo := 'TerminalTMB v7.142b';
+  DateInfo    := '14.08.2025';
   //URL         := 'https://zen.yandex.ru/tehnozet2';
   //DateInfo    := 'Em@il: Ivan160508@yandex.ru, MCard: 5586 2000 8623 2177';
   //EMail       := 'Ivan160508@yandex.ru';
@@ -10449,6 +10449,16 @@ end;
 procedure TForm1.tmrAutoConnectTimer(Sender: TObject);
 begin
   (Sender as TTimer).Enabled := False;
+  ScanComPorts;
+
+  BtOptConn.Hint := Form1.ComPort.Text + ' '
+                              + Form1.BaudRate.Text + ' '
+                              + Form1.ComBits.Text + ' '
+                              + Form1.ParityBox.Text + ' '
+                              + Form1.ComStopBits.Text;
+
+  /////////
+
   BTConnect.Click;
 end;
 
