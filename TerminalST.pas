@@ -2629,7 +2629,7 @@ var
   isCmdCfg_1 : Boolean;
   isCmdCfg_2 : Boolean;
 begin
-  VersionInfo := 'TerminalTMB v7.142b';
+  VersionInfo := 'TerminalTMB v7.143b';
   DateInfo    := '14.08.2025';
   //URL         := 'https://zen.yandex.ru/tehnozet2';
   //DateInfo    := 'Em@il: Ivan160508@yandex.ru, MCard: 5586 2000 8623 2177';
@@ -8413,8 +8413,8 @@ end;
 
 procedure TForm1.AutoConnectClick(Sender: TObject);
 begin
-  if (Sender as TCheckBox).Checked = true then
-    ShowMessage('With AutoConnect enabled, some COM port drivers may have errors!');
+  //if (Sender as TCheckBox).Checked = true then
+  //  ShowMessage('With AutoConnect enabled, some COM port drivers may have errors!');
 end;
 
 procedure TForm1.MonDialogClick(Sender: TObject);
