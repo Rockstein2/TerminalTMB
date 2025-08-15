@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 392
-  Top = 169
+  Left = 716
+  Top = 147
   Width = 969
   Height = 765
   Caption = 'TerminalTMB v2_10'
@@ -6339,5 +6339,11 @@ object Form1: TForm1
     OnTimer = tmrDelayTimer
     Left = 324
     Top = 560
+  end
+  object tmrAutoStartLog: TTimer
+    Enabled = False
+    OnTimer = tmrAutoStartLogTimer
+    Left = 436
+    Top = 564
   end
 end

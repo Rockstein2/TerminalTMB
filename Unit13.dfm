@@ -1,10 +1,10 @@
 object FormLogName: TFormLogName
-  Left = 960
-  Top = 248
+  Left = 1301
+  Top = 202
   BorderIcons = []
   BorderStyle = bsSingle
   Caption = 'The prefix of the LOG file name'
-  ClientHeight = 184
+  ClientHeight = 213
   ClientWidth = 324
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -43,7 +43,7 @@ object FormLogName: TFormLogName
   end
   object sendAnsBT1: TButton
     Left = 8
-    Top = 152
+    Top = 174
     Width = 120
     Height = 25
     Caption = 'OK'
@@ -52,7 +52,7 @@ object FormLogName: TFormLogName
   end
   object Button1: TButton
     Left = 196
-    Top = 152
+    Top = 174
     Width = 120
     Height = 25
     Caption = 'Cancel'
@@ -188,5 +188,13 @@ object FormLogName: TFormLogName
     ShowHint = True
     TabOrder = 11
     OnClick = ChKeepPausesClick
+  end
+  object CheckBox1: TCheckBox
+    Left = 8
+    Top = 148
+    Width = 309
+    Height = 17
+    Caption = 'Automatically start logging when the program starts'
+    TabOrder = 12
   end
 end

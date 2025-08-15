@@ -256,8 +256,8 @@ type
     AutoClrStrHEX   : string[250];
     AutoClrStrASCII : string[250];
     NameLogEvents   : string[250];
-    r15             : string[250];
-    r16             : string[250];
+    LogFileTxt      : string[250];
+    LogFileBin      : string[250];
     r17             : string[250];
     r18             : string[250];
     r19             : string[250];
@@ -291,7 +291,7 @@ type
     r2              : Integer;
     r3              : Integer;
     r4              : Integer;
-    r55             : Cardinal;
+    FlagsAutoLog    : Cardinal;
     r66             : Cardinal;
     r77             : Cardinal;
     PozMainWindow   : Cardinal;
@@ -783,6 +783,7 @@ type
     BtCopyList: TButton;
     BtPasteList: TButton;
     tmrDelay: TTimer;
+    tmrAutoStartLog: TTimer;
 
 
 
@@ -1198,6 +1199,7 @@ type
     procedure rb1Click(Sender: TObject);
     procedure tmrDelayTimer(Sender: TObject);
     procedure MainStrCmdClick(Sender: TObject);
+    procedure tmrAutoStartLogTimer(Sender: TObject);
 
   private
     { Private declarations }
@@ -1688,6 +1690,21 @@ var
   isFontBold : Boolean;
 
   RxDataLogOld : string;
+
+  isAutoLog : Boolean;
+  isAutoLogText : Boolean;
+  isAutoLogBin : Boolean;
+  isAutoLogTextTx : Boolean;
+  isAutoLogTextRx : Boolean;
+  isAutoLogBinTx : Boolean;
+  isAutoLogBinRx : Boolean;
+  isAutoLogSaveDelay : Boolean;
+
+  AutoLogFileTxt : String;
+  AutoLogFileBin : String;
+
+
+
 
   implementation
 
@@ -2629,8 +2646,8 @@ var
   isCmdCfg_1 : Boolean;
   isCmdCfg_2 : Boolean;
 begin
-  VersionInfo := 'TerminalTMB v7.143b';
-  DateInfo    := '14.08.2025';
+  VersionInfo := 'TerminalTMB v7.145b';
+  DateInfo    := '15.08.2025';
   //URL         := 'https://zen.yandex.ru/tehnozet2';
   //DateInfo    := 'Em@il: Ivan160508@yandex.ru, MCard: 5586 2000 8623 2177';
   //EMail       := 'Ivan160508@yandex.ru';
@@ -3482,6 +3499,18 @@ begin
 
       isModeDialog := CfgTerminal.isModeDialog = 0;
     ///////////////////////////////////////////
+
+      isAutoLog           := (CfgTerminal.FlagsAutoLog and $00000001) > 0;
+      isAutoLogText       := (CfgTerminal.FlagsAutoLog and $00000002) > 0;
+      isAutoLogBin        := (CfgTerminal.FlagsAutoLog and $00000004) > 0;
+      isAutoLogTextTx     := (CfgTerminal.FlagsAutoLog and $00000008) > 0;
+      isAutoLogTextRx     := (CfgTerminal.FlagsAutoLog and $00000010) > 0;
+      isAutoLogBinTx      := (CfgTerminal.FlagsAutoLog and $00000020) > 0;
+      isAutoLogBinRx      := (CfgTerminal.FlagsAutoLog and $00000040) > 0;
+      isAutoLogSaveDelay  := (CfgTerminal.FlagsAutoLog and $00000080) > 0;
+      AutoLogFileTxt  := CfgTerminal.LogFileTxt;
+      AutoLogFileBin  := CfgTerminal.LogFileBin;
+
     end;
 
 
@@ -3845,6 +3874,9 @@ begin
       MonDialog.Caption := 'Monitor mode';
       MonDialog.Tag := 0;
     end;
+
+
+  tmrAutoStartLog.Enabled := isAutoLog;
 
 
   isCreateFormMain := True;
@@ -5923,66 +5955,29 @@ begin
     FormParserASCII.SetNumParser(NumListCmd);
 end;
 
-procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure SaveCfgTerminal;
 var
-  NList         : integer;
-  CellList      : TListCmd;
-  NumCmd        : integer;
-  NumStrHelp    : integer;
   PozWX, PozWY  : Integer;
 begin
-  CloseComPort;
-  if FormParser.GetSaveCfgEn then
-    FormParser.SaveCfg;
-  //if isChangeCfgFile = true then
-  //  Save.ShowModal;
-  FormAnsSensor.SaveCfgEmul;
-
-  BruteForce.CloseFileCfgBruteForce;
-
-  FormAddMacros.SaveCfgInFile;
-
-
-  FormParserASCII.SaveCfg;
-
-  if isAddListCmd then
-    Form7.SaveCfg(ExtractFilePath(Application.ExeName) + 'AddCmd');
-
-
-
-  isReqSaveCmdList := true;
-  SaveCmdListsInFile;
-
-  if NoActionClose = true then
-    Action := caNone
-  else
-    begin
-      AssignFile(OldCmdFile, ExtractFilePath(Application.ExeName) + 'OldCmdList');
-      ReWrite(OldCmdFile);
-      ReSet(OldCmdFile);
-      for NList := 1 to CNT_LIST_OLDCMD do
-        Write(OldCmdFile, OldCommand[NList]);
-      CloseFile(OldCmdFile);
-
-///////////////////////////////////////////
-      CfgTerminal.NameCOM   := ComPort.Text;
-      CfgTerminal.NameCOM[Length(ComPort.Text) + 1] := #0;
-      CfgTerminal.BRate     := BaudRate.ItemIndex;
-      CfgTerminal.BRateStr  := BaudRate.Text;
-      CfgTerminal.Bits      := ComBits.ItemIndex;
-      CfgTerminal.SBits     := ComStopBits.ItemIndex;
+  ///////////////////////////////////////////
+      CfgTerminal.NameCOM   := Form1.ComPort.Text;
+      CfgTerminal.NameCOM[Length(Form1.ComPort.Text) + 1] := #0;
+      CfgTerminal.BRate     := Form1.BaudRate.ItemIndex;
+      CfgTerminal.BRateStr  := Form1.BaudRate.Text;
+      CfgTerminal.Bits      := Form1.ComBits.ItemIndex;
+      CfgTerminal.SBits     := Form1.ComStopBits.ItemIndex;
       CfgTerminal.ParityCom := ParityCom;
-      CfgTerminal.AConn     := AutoConnect.Checked;
+      CfgTerminal.AConn     := Form1.AutoConnect.Checked;
       CfgTerminal.TimeRx    := TimeOutAnsRX;
-      CfgTerminal.Filtr     := FiltrLog.Text;
+      CfgTerminal.Filtr     := Form1.FiltrLog.Text;
       CfgTerminal.FontSize  := FontSizeWindow;
-      CfgTerminal.fonColor  := MainStrCmd.Color;
-      CfgTerminal.textColor := MainStrCmd.Font.Color;
-      CfgTerminal.addTime   := VisTime.Checked;
+      CfgTerminal.fonColor  := Form1.MainStrCmd.Color;
+      CfgTerminal.textColor := Form1.MainStrCmd.Font.Color;
+      CfgTerminal.addTime   := Form1.VisTime.Checked;
       CfgTerminal.RbCapt    := TypeFilterLog = TFLCapt;
       CfgTerminal.ColorForm := Form1.Color;
 
-      CfgTerminal.FontSize   := FontSize;
+      CfgTerminal.FontSize   := Form1.FontSize;
       CfgTerminal.ColorSend  := FontColorSend;
       CfgTerminal.ColorRead  := FontColorRead;
       CfgTerminal.HandsHakingPort := HandsHakingPort;
@@ -6000,36 +5995,17 @@ begin
         CfgTerminal.SendMode := 4
       else if isByteByByte = true then
         CfgTerminal.SendMode := 5;
-
-
       CfgTerminal.Period := periodSend;
-
-      CfgTerminal.SendConn := SendAsReconn.Checked;
-
-//      if Length(MainStrCmd.Text) < 250 then
-//        CfgTerminal.MainStr := MainStrCmd.Text;
-
-//      if Length(AddStrCmd.Text) < 250 then
-//        CfgTerminal.AddStr  := AddStrCmd.Text;
-
-      CfgTerminal.ModeMacros := RBName.Checked;
+      CfgTerminal.SendConn := Form1.SendAsReconn.Checked;
+      CfgTerminal.ModeMacros := Form1.RBName.Checked;
       CfgTerminal.NumList    := NumListCmd;
-      CfgTerminal.addCntBytes := CntBytesBox.Checked;
+      CfgTerminal.addCntBytes := Form1.CntBytesBox.Checked;
       CfgTerminal.RbCapt     := TypeFilterLog = TFLCapt;
-
-      //if isSkippingReps then
-      //  CfgTerminal.SkippingReps := 1
-      //else
-      //  CfgTerminal.SkippingReps := 0;
-
-      CfgTerminal.FiltrCh := cbbFilterLOg.ItemIndex + 1;
-
-
+      CfgTerminal.FiltrCh := Form1.cbbFilterLOg.ItemIndex + 1;
       if isStatsPanel then
         CfgTerminal.ShowStat := 1
       else
         CfgTerminal.ShowStat := 0;
-
       CfgTerminal.AddWinBits := $20;
       if isAddASCII  then CfgTerminal.AddWinBits := CfgTerminal.AddWinBits or $01;
       if isAddHEX    then CfgTerminal.AddWinBits := CfgTerminal.AddWinBits or $02;
@@ -6039,7 +6015,6 @@ begin
       if isShowMode  then CfgTerminal.AddWinBits := CfgTerminal.AddWinBits or $40;
       if isAddDec    then CfgTerminal.AddWinBits := CfgTerminal.AddWinBits or $80;
       if isAddCUST   then CfgTerminal.AddWinBits := CfgTerminal.AddWinBits or $100;
-
 
       CfgTerminal.LineSeparators := $20;
       if isSep0D           then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00001;
@@ -6059,7 +6034,6 @@ begin
       if isAutoClrStrASCII then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $08000;
       if isWriteEvent      then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $10000;
       if isAConnectPort    then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $20000;
-
       if isSepBefSymbol1   then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $40000;
       if isSepBefSymbol2   then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or  $080000;
       if isSepSymbol2       then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $100000;
@@ -6069,22 +6043,18 @@ begin
 
       if isSavePos then
         begin
+          if Form1.Left < 0 then
+            PozWX := 1
+          else
+            PozWX := Form1.Left;
 
-      if Form1.Left < 0 then
-        PozWX := 1
-      else
-        PozWX := Form1.Left;
+          if Form1.Top < 0 then
+            PozWY := 1
+          else
+            PozWY := Form1.Top;
 
-      if Form1.Top < 0 then
-        PozWY := 1
-      else
-        PozWY := Form1.Top;
-
-
-      CfgTerminal.isFullScreen := Form1.WindowState = wsMaximized;
-
-
-      CfgTerminal.PozMainWindow   := (PozWX shl 16) or PozWY;
+          CfgTerminal.isFullScreen := Form1.WindowState = wsMaximized;
+          CfgTerminal.PozMainWindow   := (PozWX shl 16) or PozWY;
         end
       else
         begin
@@ -6097,15 +6067,12 @@ begin
       if isClrLogWhSend then CfgTerminal.AutoClearBits := $01;
 
       CfgTerminal.CntBytesAutoClr := CntClrBytesLog;
-
       CfgTerminal.CntBytesSep     := SepBytes;
-
       CfgTerminal.SepSymbolCfg    := SepSymbol;
       CfgTerminal.SepSymbol2Cfg    := SepSymbol2;
       CfgTerminal.TimeAutoExpan   := TimeAutoExpanNoData;
-
       CfgTerminal.StrExp          := AutoExpStr;
-      CfgTerminal.isAddDate       := isAddDate;
+      CfgTerminal.isAddDate       := Form1.isAddDate;
       CfgTerminal.isNoOutNonPrint := isNoOutNonPrint;
 
       if isModeDialog then
@@ -6115,15 +6082,59 @@ begin
 
       SetOffNonPrintCh(isNoOutNonPrint);
 
+      CfgTerminal.FlagsAutoLog := 0;
+      if isAutoLog            then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000001);
+      if isAutoLogText        then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000002);
+      if isAutoLogBin         then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000004);
+      if isAutoLogTextTx      then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000008);
+      if isAutoLogTextRx      then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000010);
+      if isAutoLogBinTx       then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000020);
+      if isAutoLogBinRx       then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000040);
+      if isAutoLogSaveDelay   then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000080);
+      CfgTerminal.LogFileTxt := AutoLogFileTxt;
+      CfgTerminal.LogFileBin := AutoLogFileBin;
+
       AssignFile(CfgTerminalFile, ExtractFilePath(Application.ExeName) + 'CnfgTMB');
       Rewrite(CfgTerminalFile);
       Reset(CfgTerminalFile);
       Write(CfgTerminalFile, CfgTerminal);
       CloseFile(CfgTerminalFile);
-
-      SaveCmdListsInFile;
       /////////////////////////////////////
 
+end;
+
+procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
+var
+  NList         : integer;
+  CellList      : TListCmd;
+  NumCmd        : integer;
+  NumStrHelp    : integer;
+begin
+  CloseComPort;
+  if FormParser.GetSaveCfgEn then
+    FormParser.SaveCfg;
+  //if isChangeCfgFile = true then
+  //  Save.ShowModal;
+  FormAnsSensor.SaveCfgEmul;
+  BruteForce.CloseFileCfgBruteForce;
+  FormAddMacros.SaveCfgInFile;
+  FormParserASCII.SaveCfg;
+  if isAddListCmd then
+    Form7.SaveCfg(ExtractFilePath(Application.ExeName) + 'AddCmd');
+  isReqSaveCmdList := true;
+  SaveCmdListsInFile;
+
+  if NoActionClose = true then
+    Action := caNone
+  else
+    begin
+      AssignFile(OldCmdFile, ExtractFilePath(Application.ExeName) + 'OldCmdList');
+      ReWrite(OldCmdFile);
+      ReSet(OldCmdFile);
+      for NList := 1 to CNT_LIST_OLDCMD do
+        Write(OldCmdFile, OldCommand[NList]);
+      CloseFile(OldCmdFile);
+      SaveCmdListsInFile;
     end;
 
   if isLogBinFile then
@@ -6163,7 +6174,8 @@ begin
     begin
       frmCustomTable.SaveTable(true);
     end;
-
+    
+  SaveCfgTerminal;
   NoActionClose := false;
 end;
 
@@ -6549,18 +6561,41 @@ begin
   SetEnHideTimer.Enabled := true;
   isEnHide := false;
 
+  if isAutoLog then
+    begin
+      (Sender as TButton).Tag := 1;
+      STLog.Color := Form1.Color;
+      NameLogFile    := AutoLogFileTxt;
+      NameLogBinFile := AutoLogFileBin;
+    end;
+
+
+  isAutoLog          := False;
+  isAutoLogText      := False;
+  isAutoLogBin       := False;
+  isAutoLogTextTx    := False;
+  isAutoLogTextRx    := False;
+  isAutoLogBinTx     := False;
+  isAutoLogBinRx     := False;
+  isAutoLogSaveDelay := False;
+  AutoLogFileTxt     := '';
+  AutoLogFileBin     := '';
 
   (Sender as TButton).Enabled := False;
+
+
+
   if (Sender as TButton).Tag = 0 then
     begin
       FileLogName := '';
       FormLogName.ShowModal;
-
-
       if not FormLogName.isCancelWriteLog then
         begin
           (Sender as TButton).Tag :=1;
           (Sender as TButton).Caption := 'Stop log';
+          NameLogBinFile := '';
+          NameLogFile    := '';
+
           if isLogFile = false then
             begin
               D:= Now;
@@ -6573,17 +6608,11 @@ begin
                     CfgTerminal.LogDir := ExtractFilePath(Application.ExeName) + '\';
                   end;
 
-
-              NameLogBinFile := '';
-              NameLogFile    := '';
-
               if isLogBin then
                 begin
+                  try
                   NameLogBinFile := CfgTerminal.LogDir;
                   NameLogBinFile := NameLogBinFile + FileLogName;
-
-
-
                   NameLogBinFile := NameLogBinFile + LogBinFileTail;
 
 
@@ -6591,19 +6620,27 @@ begin
                   ReWrite(LogBinFile);
                   isLogBinFile := true;
                   WriteLogEvent(Now, 'Start write bin file '+NameLogBinFile);
+                  except
+                  isLogBin := False;
+                  isLogBinFile := False;
+                  end;
                 end;
 
               if isLogText then
                 begin
+                 try
                  NameLogFile := CfgTerminal.LogDir;
                  NameLogFile := NameLogFile + FileLogName;
-
                  NameLogFile := NameLogFile + LogTxtFileTail;
 
                  AssignFile(LogFile, NameLogFile);
                  ReWrite(LogFile);
                  isLogFile     := true;
                  WriteLogEvent(Now, 'Start write text file '+NameLogFile);
+                 except
+                 isLogText := False;
+                 isLogFile := False;
+                 end;
                 end;
 
               StaticText1.Color := clYellow;
@@ -6612,6 +6649,23 @@ begin
           STLog.Caption := 'Log is written to file ' + NameLogFile + ' ' + NameLogBinFile;
           STLog.Hint := STLog.Caption;
           STLog.ShowHint := True;
+
+          isAutoLog          := FormLogName.isAutoLog;
+          isAutoLogText      := isLogText;
+          isAutoLogBin       := isLogBin;
+          isAutoLogTextTx    := FormLogName.isAutoLogTextTx;
+          isAutoLogTextRx    := FormLogName.isAutoLogTextRx;
+          isAutoLogBinTx     := FormLogName.isAutoLogBinTx;
+          isAutoLogBinRx     := FormLogName.isAutoLogBinRx;
+          isAutoLogSaveDelay := FormLogName.isAutoLogSaveDelay;
+
+          AutoLogFileTxt     := NameLogFile;
+          AutoLogFileBin     := NameLogBinFile;
+
+          if isAutoLog then STLog.Color := clLime
+                       else STLog.Color := Form1.Color;
+          if isAutoLog then SaveCfgTerminal;
+
         end;
      end
    else
@@ -6626,13 +6680,14 @@ begin
            isLogFile := false;
            CloseFile(LogFile);
            WriteLogEvent(Now, 'Stop write text file '+NameLogFile);
-
          end;
+
        if isLogBinFile then
          begin
            isLogBinFile := false;
            CloseFile(LogBinFile);
            WriteLogEvent(Now, 'Stop write bin file '+NameLogBinFile);
+           STLog.Caption := 'Logging stop ( '+NameLogFile+' ' + NameLogBinFile + ' )';
          end;
        OpenLogFile.ShowModal;
      end;
@@ -9185,7 +9240,9 @@ end;
 
 procedure TForm1.ClrColorTimerTimer(Sender: TObject);
 begin
-  StaticText1.Color := Form1.Color;
+  if isAutoLog then StaticText1.Color := clLime
+               else StaticText1.Color := Form1.Color;
+
   (Sender as TTimer).Enabled := false;
 end;
 
@@ -12085,6 +12142,66 @@ procedure TForm1.MainStrCmdClick(Sender: TObject);
 begin
   if BtOptConn.Tag = 1 then
     BtOptConn.Click;
+end;
+
+procedure TForm1.tmrAutoStartLogTimer(Sender: TObject);
+begin
+  (Sender as TTimer).Enabled := False;
+
+  isLogText   := isAutoLogText;
+  isLogTextTx := isAutoLogTextTx;
+  isLogBin    := isAutoLogBin;
+  isLogTextRx := isAutoLogTextRx;
+  isLogBinTx  := isAutoLogBinTx;
+  isLogBinRx  := isAutoLogBinRx;
+  isSaveDelay := isAutoLogSaveDelay;
+
+  if isLogBin and (AutoLogFileBin <> '') then
+    begin
+      try
+        AssignFile(LogBinFile, AutoLogFileBin);
+
+        if FileExists(AutoLogFileBin)
+          then Seek(LogBinFile, FileSize(LogBinFile))
+          else ReWrite(LogBinFile);
+
+        isLogBinFile := true;
+        WriteLogEvent(Now, 'Start write bin file '+ AutoLogFileBin);
+      except
+        isLogBinFile := False;
+        WriteLogEvent(Now, 'Err write bin-file '+ AutoLogFileBin);
+        AutoLogFileBin := 'Err write bin-file';
+      end;
+    end;
+
+  if isLogText and (AutoLogFileTxt <> '') then
+    begin
+      try
+        AssignFile(LogFile, AutoLogFileTxt);
+        if FileExists(AutoLogFileTxt)
+          then Append(LogFile)
+          else ReWrite(LogFile);
+
+        isLogFile := true;
+        WriteLogEvent(Now, 'Start write text file '+ AutoLogFileTxt);
+      except
+        isLogFile := false;
+        WriteLogEvent(Now, 'Err write txt-file '+ AutoLogFileTxt);
+        AutoLogFileTxt := 'Err write txt-file';
+      end;
+    end;
+
+  isAutoLog := isLogFile or isLogBinFile;
+
+  if isAutoLog then
+    begin
+      STLog.Caption := 'Auto write: ' + AutoLogFileTxt + ' ' + AutoLogFileBin;
+      STLog.Hint := STLog.Caption;
+      STLog.ShowHint := True;
+      STLog.Color := clLime;
+      StartLog.Caption := 'Stop Log';
+    end
+  else STLog.Color := Form1.Color;    
 end;
 
 end.

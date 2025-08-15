@@ -22,6 +22,7 @@ type
     Label1: TLabel;
     Label2: TLabel;
     ChKeepPauses: TCheckBox;
+    CheckBox1: TCheckBox;
     procedure sendAnsBT1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -36,7 +37,26 @@ type
     { Private declarations }
   public
     isCancelWriteLog : boolean;
+
+    isAutoLog : Boolean;
+    isAutoLogText : Boolean;
+    isAutoLogBin : Boolean;
+    isAutoLogTextTx : Boolean;
+    isAutoLogTextRx : Boolean;
+    isAutoLogBinTx : Boolean;
+    isAutoLogBinRx : Boolean;
+    isAutoLogSaveDelay : Boolean;
+
+    AutoLogFileTxt : String;
+    AutoLogFileBin : String;
+
+
+
     { Public declarations }
+
+
+
+
   end;
 
 var
@@ -67,6 +87,17 @@ begin
 
 
   isCancelWriteLog       := false;
+
+
+  isAutoLog          := CheckBox1.Checked;
+  isAutoLogText      := TerminalST.isLogText;
+  isAutoLogTextTx    := TerminalST.isLogTextTx;
+  isAutoLogBin       := TerminalST.isLogBin;
+  isAutoLogTextRx    := TerminalST.isLogTextRx;
+  isAutoLogBinTx     := TerminalST.isLogBinTx;
+  isAutoLogBinRx     := TerminalST.isLogBinRx;
+  isAutoLogSaveDelay := TerminalST.isSaveDelay;
+
   FormLogName.Close;
 end;
 
@@ -111,7 +142,6 @@ sendAnsBT1.Enabled := (ChBin.Checked  and (ChTxBin.Checked or ChRxBin.Checked)) 
                         (ChText.Checked and (ChTxText.Checked or ChRxText.Checked)) ;
 
 ChText.Checked := ChTxText.Checked or ChRxText.Checked;
-
 end;
 
 procedure TFormLogName.ChRxTextClick(Sender: TObject);
