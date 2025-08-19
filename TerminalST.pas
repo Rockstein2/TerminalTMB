@@ -1704,7 +1704,7 @@ var
   AutoLogFileBin : String;
 
 
-
+  Wtime : Cardinal;
 
   implementation
 
@@ -2646,11 +2646,11 @@ var
   isCmdCfg_1 : Boolean;
   isCmdCfg_2 : Boolean;
 begin
-  VersionInfo := 'TerminalTMB v7.145b';
-  DateInfo    := '15.08.2025';
+  VersionInfo := 'TerminalTMB v7.146b';
+  DateInfo    := '19.08.2025';
   //URL         := 'https://zen.yandex.ru/tehnozet2';
   //DateInfo    := 'Em@il: Ivan160508@yandex.ru, MCard: 5586 2000 8623 2177';
-  //EMail       := 'Ivan160508@yandex.ru';
+  EMail       := 'Ivan160508@yandex.ru';
   EMail       := 'Ivan160508@yandex.ru, MIR: 2202 2062 7669 8490';
   isFormAnsSensors := False;
   isUseParserHEX := False;
@@ -2741,7 +2741,7 @@ begin
 
   LastKeyJ                 := 0;
 
-
+  Wtime                   := 0;
   MaxOF                   := 0;
 
   CurTimeRB               := Now;
@@ -5960,147 +5960,144 @@ var
   PozWX, PozWY  : Integer;
 begin
   ///////////////////////////////////////////
-      CfgTerminal.NameCOM   := Form1.ComPort.Text;
-      CfgTerminal.NameCOM[Length(Form1.ComPort.Text) + 1] := #0;
-      CfgTerminal.BRate     := Form1.BaudRate.ItemIndex;
-      CfgTerminal.BRateStr  := Form1.BaudRate.Text;
-      CfgTerminal.Bits      := Form1.ComBits.ItemIndex;
-      CfgTerminal.SBits     := Form1.ComStopBits.ItemIndex;
-      CfgTerminal.ParityCom := ParityCom;
-      CfgTerminal.AConn     := Form1.AutoConnect.Checked;
-      CfgTerminal.TimeRx    := TimeOutAnsRX;
-      CfgTerminal.Filtr     := Form1.FiltrLog.Text;
-      CfgTerminal.FontSize  := FontSizeWindow;
-      CfgTerminal.fonColor  := Form1.MainStrCmd.Color;
-      CfgTerminal.textColor := Form1.MainStrCmd.Font.Color;
-      CfgTerminal.addTime   := Form1.VisTime.Checked;
-      CfgTerminal.RbCapt    := TypeFilterLog = TFLCapt;
-      CfgTerminal.ColorForm := Form1.Color;
+  CfgTerminal.NameCOM   := Form1.ComPort.Text;
+  CfgTerminal.NameCOM[Length(Form1.ComPort.Text) + 1] := #0;
+  CfgTerminal.BRate     := Form1.BaudRate.ItemIndex;
+  CfgTerminal.BRateStr  := Form1.BaudRate.Text;
+  CfgTerminal.Bits      := Form1.ComBits.ItemIndex;
+  CfgTerminal.SBits     := Form1.ComStopBits.ItemIndex;
+  CfgTerminal.ParityCom := ParityCom;
+  CfgTerminal.AConn     := Form1.AutoConnect.Checked;
+  CfgTerminal.TimeRx    := TimeOutAnsRX;
+  CfgTerminal.Filtr     := Form1.FiltrLog.Text;
+  CfgTerminal.FontSize  := FontSizeWindow;
+  CfgTerminal.fonColor  := Form1.MainStrCmd.Color;
+  CfgTerminal.textColor := Form1.MainStrCmd.Font.Color;
+  CfgTerminal.addTime   := Form1.VisTime.Checked;
+  CfgTerminal.RbCapt    := TypeFilterLog = TFLCapt;
+  CfgTerminal.ColorForm := Form1.Color;
 
-      CfgTerminal.FontSize   := Form1.FontSize;
-      CfgTerminal.ColorSend  := FontColorSend;
-      CfgTerminal.ColorRead  := FontColorRead;
-      CfgTerminal.HandsHakingPort := HandsHakingPort;
+  CfgTerminal.FontSize   := Form1.FontSize;
+  CfgTerminal.ColorSend  := FontColorSend;
+  CfgTerminal.ColorRead  := FontColorRead;
+  CfgTerminal.HandsHakingPort := HandsHakingPort;
       //CfgTerminal.addCntBytes := CntBytesBox.Checked;
 
-      CfgTerminal.TimeNoInputData := Round(TimeNoInputData / 10);
+  CfgTerminal.TimeNoInputData := Round(TimeNoInputData / 10);
 
-      if isManualSend = true then
-        CfgTerminal.SendMode := 1
-      else if isWhChSend = true then
-        CfgTerminal.SendMode := 2
-      else if isAftAnsSend = true then
-        CfgTerminal.SendMode := 3
-      else if isPeriodSend = true then
-        CfgTerminal.SendMode := 4
-      else if isByteByByte = true then
-        CfgTerminal.SendMode := 5;
-      CfgTerminal.Period := periodSend;
-      CfgTerminal.SendConn := Form1.SendAsReconn.Checked;
-      CfgTerminal.ModeMacros := Form1.RBName.Checked;
-      CfgTerminal.NumList    := NumListCmd;
-      CfgTerminal.addCntBytes := Form1.CntBytesBox.Checked;
-      CfgTerminal.RbCapt     := TypeFilterLog = TFLCapt;
-      CfgTerminal.FiltrCh := Form1.cbbFilterLOg.ItemIndex + 1;
-      if isStatsPanel then
-        CfgTerminal.ShowStat := 1
+  if isManualSend = true then
+    CfgTerminal.SendMode := 1
+  else if isWhChSend = true then
+    CfgTerminal.SendMode := 2
+  else if isAftAnsSend = true then
+    CfgTerminal.SendMode := 3
+  else if isPeriodSend = true then
+    CfgTerminal.SendMode := 4
+  else if isByteByByte = true then
+    CfgTerminal.SendMode := 5;
+  CfgTerminal.Period := periodSend;
+  CfgTerminal.SendConn := Form1.SendAsReconn.Checked;
+  CfgTerminal.ModeMacros := Form1.RBName.Checked;
+  CfgTerminal.NumList    := NumListCmd;
+  CfgTerminal.addCntBytes := Form1.CntBytesBox.Checked;
+  CfgTerminal.RbCapt     := TypeFilterLog = TFLCapt;
+  CfgTerminal.FiltrCh := Form1.cbbFilterLOg.ItemIndex + 1;
+  if isStatsPanel then
+    CfgTerminal.ShowStat := 1
+  else
+    CfgTerminal.ShowStat := 0;
+  CfgTerminal.AddWinBits := $20;
+  if isAddASCII  then CfgTerminal.AddWinBits := CfgTerminal.AddWinBits or $01;
+  if isAddHEX    then CfgTerminal.AddWinBits := CfgTerminal.AddWinBits or $02;
+  if isAddTX     then CfgTerminal.AddWinBits := CfgTerminal.AddWinBits or $04;
+  if isAddRX     then CfgTerminal.AddWinBits := CfgTerminal.AddWinBits or $08;
+  if isAddIgnFlt then CfgTerminal.AddWinBits := CfgTerminal.AddWinBits or $10;
+  if isShowMode  then CfgTerminal.AddWinBits := CfgTerminal.AddWinBits or $40;
+  if isAddDec    then CfgTerminal.AddWinBits := CfgTerminal.AddWinBits or $80;
+  if isAddCUST   then CfgTerminal.AddWinBits := CfgTerminal.AddWinBits or $100;
+
+  CfgTerminal.LineSeparators := $20;
+  if isSep0D           then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00001;
+  if isSep0A           then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00002;
+  if isSep00           then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00004;
+  if isSep0D0A         then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00008;
+  if isSepTime         then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00010;
+  if isSepBytes        then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00040;
+  if isSepSymbol       then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00080;
+  if isResetFifo       then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00100;
+  if isAutoExpandNoInData      then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00200;
+  if isAutoExpStr      then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00400;
+  if isCntExpBytes     then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00800;
+  if isExpWin          then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $01000;
+  if isFileSendOK      then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $02000;
+  if isAutoClrStrHEX   then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $04000;
+  if isAutoClrStrASCII then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $08000;
+  if isWriteEvent      then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $10000;
+  if isAConnectPort    then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $20000;
+  if isSepBefSymbol1   then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $40000;
+  if isSepBefSymbol2   then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or  $080000;
+  if isSepSymbol2       then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $100000;
+
+  CfgTerminal.AutoClrStrHEX   := AutoClrStrHEX;
+  CfgTerminal.AutoClrStrASCII := AutoClrStrASCII;
+
+  if isSavePos then
+    begin
+      if Form1.Left < 0 then
+        PozWX := 1
       else
-        CfgTerminal.ShowStat := 0;
-      CfgTerminal.AddWinBits := $20;
-      if isAddASCII  then CfgTerminal.AddWinBits := CfgTerminal.AddWinBits or $01;
-      if isAddHEX    then CfgTerminal.AddWinBits := CfgTerminal.AddWinBits or $02;
-      if isAddTX     then CfgTerminal.AddWinBits := CfgTerminal.AddWinBits or $04;
-      if isAddRX     then CfgTerminal.AddWinBits := CfgTerminal.AddWinBits or $08;
-      if isAddIgnFlt then CfgTerminal.AddWinBits := CfgTerminal.AddWinBits or $10;
-      if isShowMode  then CfgTerminal.AddWinBits := CfgTerminal.AddWinBits or $40;
-      if isAddDec    then CfgTerminal.AddWinBits := CfgTerminal.AddWinBits or $80;
-      if isAddCUST   then CfgTerminal.AddWinBits := CfgTerminal.AddWinBits or $100;
+        PozWX := Form1.Left;
 
-      CfgTerminal.LineSeparators := $20;
-      if isSep0D           then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00001;
-      if isSep0A           then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00002;
-      if isSep00           then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00004;
-      if isSep0D0A         then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00008;
-      if isSepTime         then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00010;
-      if isSepBytes        then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00040;
-      if isSepSymbol       then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00080;
-      if isResetFifo       then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00100;
-      if isAutoExpandNoInData      then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00200;
-      if isAutoExpStr      then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00400;
-      if isCntExpBytes     then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $00800;
-      if isExpWin          then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $01000;
-      if isFileSendOK      then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $02000;
-      if isAutoClrStrHEX   then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $04000;
-      if isAutoClrStrASCII then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $08000;
-      if isWriteEvent      then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $10000;
-      if isAConnectPort    then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $20000;
-      if isSepBefSymbol1   then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $40000;
-      if isSepBefSymbol2   then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or  $080000;
-      if isSepSymbol2       then CfgTerminal.LineSeparators := CfgTerminal.LineSeparators or $100000;
-
-      CfgTerminal.AutoClrStrHEX   := AutoClrStrHEX;
-      CfgTerminal.AutoClrStrASCII := AutoClrStrASCII;
-
-      if isSavePos then
-        begin
-          if Form1.Left < 0 then
-            PozWX := 1
-          else
-            PozWX := Form1.Left;
-
-          if Form1.Top < 0 then
-            PozWY := 1
-          else
-            PozWY := Form1.Top;
-
-          CfgTerminal.isFullScreen := Form1.WindowState = wsMaximized;
-          CfgTerminal.PozMainWindow   := (PozWX shl 16) or PozWY;
-        end
+      if Form1.Top < 0 then
+        PozWY := 1
       else
-        begin
-          CfgTerminal.PozMainWindow := 0;
-          CfgTerminal.isFullScreen  := False;
-        end;
+        PozWY := Form1.Top;
 
-      CfgTerminal.CntExpBytes := CntExpBytes;
-
-      if isClrLogWhSend then CfgTerminal.AutoClearBits := $01;
-
-      CfgTerminal.CntBytesAutoClr := CntClrBytesLog;
-      CfgTerminal.CntBytesSep     := SepBytes;
-      CfgTerminal.SepSymbolCfg    := SepSymbol;
-      CfgTerminal.SepSymbol2Cfg    := SepSymbol2;
-      CfgTerminal.TimeAutoExpan   := TimeAutoExpanNoData;
-      CfgTerminal.StrExp          := AutoExpStr;
-      CfgTerminal.isAddDate       := Form1.isAddDate;
-      CfgTerminal.isNoOutNonPrint := isNoOutNonPrint;
-
-      if isModeDialog then
-        CfgTerminal.isModeDialog := 0
+      CfgTerminal.isFullScreen := Form1.WindowState = wsMaximized;
+      CfgTerminal.PozMainWindow   := (PozWX shl 16) or PozWY;
+    end
       else
-        CfgTerminal.isModeDialog := 1;
+    begin
+      CfgTerminal.PozMainWindow := 0;
+      CfgTerminal.isFullScreen  := False;
+    end;
 
-      SetOffNonPrintCh(isNoOutNonPrint);
+  CfgTerminal.CntExpBytes := CntExpBytes;
 
-      CfgTerminal.FlagsAutoLog := 0;
-      if isAutoLog            then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000001);
-      if isAutoLogText        then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000002);
-      if isAutoLogBin         then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000004);
-      if isAutoLogTextTx      then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000008);
-      if isAutoLogTextRx      then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000010);
-      if isAutoLogBinTx       then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000020);
-      if isAutoLogBinRx       then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000040);
-      if isAutoLogSaveDelay   then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000080);
-      CfgTerminal.LogFileTxt := AutoLogFileTxt;
-      CfgTerminal.LogFileBin := AutoLogFileBin;
+  if isClrLogWhSend then CfgTerminal.AutoClearBits := $01;
+    CfgTerminal.CntBytesAutoClr := CntClrBytesLog;
+    CfgTerminal.CntBytesSep     := SepBytes;
+    CfgTerminal.SepSymbolCfg    := SepSymbol;
+    CfgTerminal.SepSymbol2Cfg    := SepSymbol2;
+    CfgTerminal.TimeAutoExpan   := TimeAutoExpanNoData;
+    CfgTerminal.StrExp          := AutoExpStr;
+    CfgTerminal.isAddDate       := Form1.isAddDate;
+    CfgTerminal.isNoOutNonPrint := isNoOutNonPrint;
 
-      AssignFile(CfgTerminalFile, ExtractFilePath(Application.ExeName) + 'CnfgTMB');
-      Rewrite(CfgTerminalFile);
-      Reset(CfgTerminalFile);
-      Write(CfgTerminalFile, CfgTerminal);
-      CloseFile(CfgTerminalFile);
-      /////////////////////////////////////
+  if isModeDialog then
+    CfgTerminal.isModeDialog := 0
+  else
+    CfgTerminal.isModeDialog := 1;
 
+  SetOffNonPrintCh(isNoOutNonPrint);
+
+  CfgTerminal.FlagsAutoLog := 0;
+  if isAutoLog            then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000001);
+  if isAutoLogText        then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000002);
+  if isAutoLogBin         then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000004);
+  if isAutoLogTextTx      then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000008);
+  if isAutoLogTextRx      then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000010);
+  if isAutoLogBinTx       then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000020);
+  if isAutoLogBinRx       then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000040);
+  if isAutoLogSaveDelay   then CfgTerminal.FlagsAutoLog := (CfgTerminal.FlagsAutoLog or $00000080);
+  CfgTerminal.LogFileTxt := AutoLogFileTxt;
+  CfgTerminal.LogFileBin := AutoLogFileBin;
+
+  AssignFile(CfgTerminalFile, ExtractFilePath(Application.ExeName) + 'CnfgTMB');
+  Rewrite(CfgTerminalFile);
+  Reset(CfgTerminalFile);
+  Write(CfgTerminalFile, CfgTerminal);
+  CloseFile(CfgTerminalFile);
 end;
 
 procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -7712,7 +7709,7 @@ begin
   //RBHEX.Enabled   := isEnSwitch;
   //ListDec.Enabled := isEnSwitch;
   //ListInc.Enabled := isEnSwitch;
-
+  inc(Wtime);
   ctxt1.Caption := IntToStr(CntDataLog);
 
   if (CntDataLog > CntClrBytesLog) then
@@ -10501,6 +10498,8 @@ end;
 procedure TForm1.ChAconnPortClick(Sender: TObject);
 begin
   isAConnectPort := (Sender as TCheckBox).Checked;
+  if Wtime > 10 then
+    SaveCfgTerminal;
 end;
 
 procedure TForm1.tmrAutoConnectTimer(Sender: TObject);

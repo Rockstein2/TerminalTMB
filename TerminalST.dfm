@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 716
-  Top = 147
+  Left = 660
+  Top = 23
   Width = 969
   Height = 765
   Caption = 'TerminalTMB v2_10'
@@ -6055,8 +6055,8 @@ object Form1: TForm1
     Visible = False
   end
   object SelTerm: TPanel
-    Left = 6
-    Top = 28
+    Left = 5
+    Top = 26
     Width = 573
     Height = 81
     TabOrder = 31
