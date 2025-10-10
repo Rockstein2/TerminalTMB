@@ -208,12 +208,12 @@ object Form1: TForm1
       Top = 0
       Width = 65
       Height = 25
-      Caption = 'Terminals'
+      Caption = 'Pre-settings'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
+      Font.Style = []
       ParentFont = False
       TabOrder = 12
       OnClick = Bt22Click

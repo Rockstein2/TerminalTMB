@@ -223,7 +223,7 @@ begin
   isEnChange := False;
   CmdName.Text := Form1.GetCmdName(Form1.GetNumList, Form1.ActualCellListCmd);
   CmdData.Text := Form1.GetCmdData(Form1.GetNumList, Form1.ActualCellListCmd);
-  FormWidthStart  := FormEditHelpCmd.Width;
+  //FormWidthStart  := FormEditHelpCmd.Width;
 
   edt1.Color := FormEditHelpCmd.Color;
   mmo1.Clear;
