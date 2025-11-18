@@ -784,7 +784,7 @@ type
     BtPasteList: TButton;
     tmrDelay: TTimer;
     tmrAutoStartLog: TTimer;
-
+    chkAutoScrollOff: TCheckBox;
 
 
     procedure FormCanResize(Sender: TObject; var NewWidth,
@@ -990,8 +990,7 @@ type
     procedure FSmodeBtClick(Sender: TObject);
     procedure OpenBinBTClick(Sender: TObject);
     procedure FiltrLogChange(Sender: TObject);
-    procedure TabEditCmdDrawTab(Control: TCustomTabControl;
-      TabIndex: Integer; const Rect: TRect; Active: Boolean);
+    procedure TabEditCmdDrawTab(Control: TCustomTabControl; TabIndex: Integer; const Rect: TRect; Active: Boolean);
     procedure TabEditCmdChange(Sender: TObject);
     procedure EditCmdSetIsReqSave(Sender: TObject; var Key: Char);
     procedure Button50Click(Sender: TObject);
@@ -1090,10 +1089,11 @@ type
     procedure EdtBefSymbol1DecChange(Sender: TObject);
     procedure Edt2Change(Sender: TObject);
     procedure EdtBefSym1Change(Sender: TObject);
+    //
     procedure EdtBefSym2Change(Sender: TObject);
 
     //procedure EdtBefSymbol1DecExit(Sender: TObject);
-    
+
     procedure Edt2Exit(Sender: TObject);
     procedure EdtBefSymbol1DecKeyPress(Sender: TObject; var Key: Char);
     procedure Edt2KeyPress(Sender: TObject; var Key: Char);
@@ -1101,21 +1101,17 @@ type
     procedure EdtBefSym2KeyPress(Sender: TObject; var Key: Char);
     procedure BtSendKeyPress(Sender: TObject; var Key: Char);
     procedure ChHKClick(Sender: TObject);
-    procedure ChHKMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
+    procedure ChHKMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure HKChange(Sender: TObject);
     procedure tmrCheckHKTimer(Sender: TObject);
     procedure tmr1Timer(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure MainWindowKeyPress(Sender: TObject; var Key: Char);
-    procedure FormMouseWheelDown(Sender: TObject; Shift: TShiftState;
-      MousePos: TPoint; var Handled: Boolean);
-    procedure FormMouseWheelUp(Sender: TObject; Shift: TShiftState;
-      MousePos: TPoint; var Handled: Boolean);
+    procedure FormMouseWheelDown(Sender: TObject; Shift: TShiftState; MousePos: TPoint; var Handled: Boolean);
+    procedure FormMouseWheelUp(Sender: TObject; Shift: TShiftState; MousePos: TPoint; var Handled: Boolean);
     procedure EdtJDblClick(Sender: TObject);
     procedure tmrCheckJTimer(Sender: TObject);
-    procedure EdtJMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
+    procedure EdtJMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure BtParserClick(Sender: TObject);
     procedure BtAddMacrosClick(Sender: TObject);
     procedure BtUtilitesClick(Sender: TObject);
@@ -1158,13 +1154,10 @@ type
     procedure edt115Change(Sender: TObject);
     procedure chk6Click(Sender: TObject);
     procedure tmrAutoResetFIFOTimer(Sender: TObject);
-    procedure CMainWindowMouseDown(Sender: TObject;
-      Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure CMainWindowMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure CMainWindowKeyPress(Sender: TObject; var Key: Char);
-    procedure CMainWindowMouseMove(Sender: TObject;
-      Shift: TShiftState; X, Y: Integer);
-    procedure CMainWindowAddMouseDown(Sender: TObject;
-      Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure CMainWindowMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure CMainWindowAddMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure cbbSendModeChange(Sender: TObject);
     procedure cbbReadModeChange(Sender: TObject);
     procedure BtAddPortsClick(Sender: TObject);
@@ -1200,9 +1193,12 @@ type
     procedure tmrDelayTimer(Sender: TObject);
     procedure MainStrCmdClick(Sender: TObject);
     procedure tmrAutoStartLogTimer(Sender: TObject);
+    procedure chkAutoScrollOffClick(Sender: TObject);
 
   private
     { Private declarations }
+    procedure MyLineAddToMemo(const S: string);
+
   public
     STH         : array[1..12] of TStaticText;
     VersionInfo : string;
@@ -1216,10 +1212,10 @@ type
     BufCntBytesRead : array[0..255] of Cardinal;
     BufCntBytesSend : array[0..255] of Cardinal;
     ColorInputData : TColor;
-  isColorInputData : Boolean;
-  isUseParserHEX    : Boolean;
-  isUseCustomTable : Boolean;
-  isUseParserASCII : Boolean;
+    isColorInputData : Boolean;
+    isUseParserHEX    : Boolean;
+    isUseCustomTable : Boolean;
+    isUseParserASCII : Boolean;
 
     isSaveFileAddPortsA : Boolean;
     isSaveFileAddPortsB : Boolean;
@@ -1347,6 +1343,7 @@ var
   isLogTextRx             : boolean;
   isSaveDelay             : Boolean;
   isReqSaveCmdList        : boolean;
+  isAutoScrollOff         :  Boolean;  
 
   isResetFifo             : boolean;
   CurHotKey               : Byte;
@@ -1804,234 +1801,219 @@ begin
   CiklSend.Enabled   := true;
 end;
 
-
-
-
-procedure TForm1.MemoUpd(DT : TDateTime; BeginStr: string; LogStr : string; LogStrASCII : string; LogStrHEX : string; LogStrDec: string; LogStrCUST: string; isRx : boolean; ColorText : TColor);
+procedure TForm1.MemoUpd(DT: TDateTime; BeginStr: string; LogStr: string; LogStrASCII: string; LogStrHEX: string; LogStrDec: string; LogStrCUST: string; isRx: Boolean; ColorText: TColor);
 var
-  lst         : TStringList;
-  isOutLog    : boolean;
-  isPauseLog  : boolean;
-  TmpStr      : string;
-  StrASCII, StrHEX, StrDEC, StrCUST : string;
-  LenFiltr    : Integer;
-  Index       : Integer;
-  DeltaMS     : Integer;
+  lst: TStringList;
+  isOutLog: Boolean;
+  isPauseLog: Boolean;
+  TmpStr: string;
+  StrASCII, StrHEX, StrDEC, StrCUST: string;
+  LenFiltr: Integer;
+  Index: Integer;
+  DeltaMS: Integer;
 begin
 
   //////////////////////////////////////////////////////////////////////////////For AddPORTS
-  if (BeginStr = '') and (LogStrASCII = '') and (LogStrHEX <> '') then
-    begin
-      CMainWindowAdd.SelAttributes.Color := ColorText;
-      CMainWindowAdd.Lines.Add(LogStrHEX);
-      CntBytesAdd := CntBytesAdd + Length(LogStrHEX);
-      if CntBytesAdd > CntClrBytesLog then
-        begin
-          CMainWindowAdd.Clear;
-          CntBytesAdd := 0;
-        end;
-      Exit;
+  if (BeginStr = '') and (LogStrASCII = '') and (LogStrHEX <> '') then begin
+    CMainWindowAdd.SelAttributes.Color := ColorText;
+    CMainWindowAdd.Lines.Add(LogStrHEX);
+    CntBytesAdd := CntBytesAdd + Length(LogStrHEX);
+    if CntBytesAdd > CntClrBytesLog then begin
+      CMainWindowAdd.Clear;
+      CntBytesAdd := 0;
     end;
+    Exit;
+  end;
   ///////////////////////////////////////////////////////////////////////////////
 
-  if (isSkippingReps and (LogStr = RxDataLogOld)) then Exit;
+  if (isSkippingReps and (LogStr = RxDataLogOld)) then begin
+    Exit;
+  end;
   RxDataLogOld := LogStr;
   ///////////////////////////////////////////////////////////////////////////////
 
   StrASCII := '';
-  StrHEX   := '';
-  StrDEC   := '';
-  StrCUST  := '';
+  StrHEX := '';
+  StrDEC := '';
+  StrCUST := '';
 
-
-  if (isADDTX or isADDRX) and isAddWindow then
-    begin
-      if isAddASCII then StrASCII := LogStrASCII;
-      if isAddHEX   then StrHEX   := LogStrHEX;
-      if isAddDEC   then StrDEC   := LogStrDEC;
-      if isAddCUST  then StrCUST   := LogStrCUST;
+  if (isADDTX or isADDRX) and isAddWindow then begin
+    if isAddASCII then begin
+      StrASCII := LogStrASCII;
     end;
-
-  isOutLog   := false;
-  isPauseLog := false;
-
-  if (isAutoExpStr) and (AutoExpStr <> '') and (isRx) then
-    begin
-      if Pos(AutoExpStr, LogStr) > 0 then
-        begin
-          WriteLogEvent(CurTimeRB, 'Rec substring ( ' + AutoExpStr +' )');
-          if (isExpWin) and (not IsIconic(Form1.Handle)) then
-            begin
-              Application.Restore;
-            end;
-          if isOpenMsgEventRecSubstrEn[NumListCmd] then
-            begin
-              FormEvent.SrcEvent := SrcEventMain;
-              FormEvent.EventMSG := 'Rec substring ( ' + AutoExpStr +' )';
-              FormEvent.ShowModal;
-              isOpenMsgEventRecSubstrEn[NumListCmd] := not FormEvent.isNotShowEvent;
-            end;
-        end;
+    if isAddHEX then begin
+      StrHEX := LogStrHEX;
     end;
-
-  if(isAutoClrStrASCII) and (AutoClrStrASCII <> '') and (isRx) and (ReadMode = ReadASCII) then
-    begin
-      if Pos(AutoClrStrASCII, LogStr) > 0 then
-        begin
-          WriteLogEvent(CurTimeRB, 'AutoClrASCII ( ' + AutoClrStrASCII + ' )');
-          CMainWindow.Clear;
-          CMainWindowAdd.Clear;
-          CntDataLog := 0;
-          CntBytesAdd := 0;
-        end;
+    if isAddDEC then begin
+      StrDEC := LogStrDEC;
     end;
-
-  if(isAutoClrStrHEX) and (AutoClrStrHEX <> '') and (isRx) and (ReadMode = ReadHEX) then
-    begin
-      if Pos(AutoClrStrHEX, LogStr) > 0 then
-        begin
-          WriteLogEvent(CurTimeRB, 'AutoClrHEX ( ' + AutoClrStrHEX + ' )');
-          CMainWindow.Clear;
-          CMainWindowAdd.Clear;
-          CntDataLog := 0;
-          CntBytesAdd := 0;
-        end;
+    if isAddCUST then begin
+      StrCUST := LogStrCUST;
     end;
+  end;
 
+  isOutLog := False;
+  isPauseLog := False;
 
+  if (isAutoExpStr) and (AutoExpStr <> '') and (isRx) then begin
+    if Pos(AutoExpStr, LogStr) > 0 then begin
+      WriteLogEvent(CurTimeRB, 'Rec substring ( ' + AutoExpStr + ' )');
+      if (isExpWin) and (not IsIconic(Form1.Handle)) then begin
+        Application.Restore;
+      end;
+      if isOpenMsgEventRecSubstrEn[NumListCmd] then begin
+        FormEvent.SrcEvent := SrcEventMain;
+        FormEvent.EventMSG := 'Rec substring ( ' + AutoExpStr + ' )';
+        FormEvent.ShowModal;
+        isOpenMsgEventRecSubstrEn[NumListCmd] := not FormEvent.isNotShowEvent;
+      end;
+    end;
+  end;
 
-  if FiltrLog.Text <> '' then
-    begin
-      TmpStr     := LogStr;
-      LenFiltr   := Length(FiltrLog.Text);
+  if (isAutoClrStrASCII) and (AutoClrStrASCII <> '') and (isRx) and (ReadMode = ReadASCII) then begin
+    if Pos(AutoClrStrASCII, LogStr) > 0 then begin
+      WriteLogEvent(CurTimeRB, 'AutoClrASCII ( ' + AutoClrStrASCII + ' )');
+      CMainWindow.Clear;
+      CMainWindowAdd.Clear;
+      CntDataLog := 0;
+      CntBytesAdd := 0;
+    end;
+  end;
 
+  if (isAutoClrStrHEX) and (AutoClrStrHEX <> '') and (isRx) and (ReadMode = ReadHEX) then begin
+    if Pos(AutoClrStrHEX, LogStr) > 0 then begin
+      WriteLogEvent(CurTimeRB, 'AutoClrHEX ( ' + AutoClrStrHEX + ' )');
+      CMainWindow.Clear;
+      CMainWindowAdd.Clear;
+      CntDataLog := 0;
+      CntBytesAdd := 0;
+    end;
+  end;
+
+  if FiltrLog.Text <> '' then begin
+    TmpStr := LogStr;
+    LenFiltr := Length(FiltrLog.Text);
+
+    Index := Pos(FiltrLog.Text, TmpStr);
+
+    while Index > 0 do begin
+      Delete(TmpStr, Index, LenFiltr);
       Index := Pos(FiltrLog.Text, TmpStr);
-
-      while Index > 0 do
-        begin
-          Delete(TmpStr, Index, LenFiltr);
-          Index := Pos(FiltrLog.Text, TmpStr);
-          inc(Stats.HitCounter);
-        end;
-      CntCmpLvl.Caption := 'Match cnt ' + '"' + FiltrLog.Text + '" : ' + IntToStr(Stats.HitCounter);
+      Inc(Stats.HitCounter);
     end;
+    CntCmpLvl.Caption := 'Match cnt ' + '"' + FiltrLog.Text + '" : ' + IntToStr(Stats.HitCounter);
+  end;
 
-
-
-
-  if FiltrLog.Text <> '' then
-    begin
-      if TypeFilterLog = TFLOut then
-        begin
-          if Pos(FiltrLog.Text, LogStr) > 0 then
-            isOutLog := true;
-        end
-      else if TypeFilterLog = TFLCapt then
-        begin
-          isOutLog := true;
-          if Pos(FiltrLog.Text, LogStr) > 0 then
-            isPauseLog := true;
-        end
-      else if TypeFilterLog = TFLNoFilter then
-        begin
-          isOutLog := true;
-        end
-      else if TypeFilterLog = TFLNoOut then
-        begin
-          if Pos(FiltrLog.Text, LogStr) = 0 then
-            isOutLog := true;
-        end;
-    end
-  else
-    isOutLog := true;
-
-  if isAddWindow then
-    begin
-      if isADDTX and not isRx then
-        begin
-          if isShowMode and (StrASCII <> '') then StrASCII := '[A] ' + StrASCII;
-          if isShowMode and (StrHEX <> '')   then StrHEX   := '[H] ' + StrHEX;
-          if isShowMode and (StrDEC <> '')   then StrDEC   := '[D] ' + StrDEC;
-          if isShowMode and (StrCUST <> '')  then StrCUST   := '[C] ' + StrCUST;
-        end;
-      if isADDRX and isRx then
-        begin
-          if isShowMode and (StrASCII <> '') then StrASCII := '[A] ' + StrASCII;
-          if isShowMode and (StrHEX <> '')   then StrHEX   := '[H] ' + StrHEX;
-          if isShowMode and (StrDEC <> '')   then StrDEC   := '[D] ' + StrDEC;
-          if isShowMode and (StrCUST <> '')  then StrCUST   := '[C] ' + StrCUST;
-        end;
+  if FiltrLog.Text <> '' then begin
+    if TypeFilterLog = TFLOut then begin
+      if Pos(FiltrLog.Text, LogStr) > 0 then begin
+        isOutLog := True;
+      end;
+    end else if TypeFilterLog = TFLCapt then begin
+      isOutLog := True;
+      if Pos(FiltrLog.Text, LogStr) > 0 then begin
+        isPauseLog := True;
+      end;
+    end else if TypeFilterLog = TFLNoFilter then begin
+      isOutLog := True;
+    end else if TypeFilterLog = TFLNoOut then begin
+      if Pos(FiltrLog.Text, LogStr) = 0 then begin
+        isOutLog := True;
+      end;
     end;
+  end else begin
+    isOutLog := True;
+  end;
 
-  if ((isADDRX and isRx) or (isADDTX and not isRx)) and (isAddIgnFlt or isOutLog) then
-    begin
+  if isAddWindow then begin
+    if isADDTX and not isRx then begin
+      if isShowMode and (StrASCII <> '') then begin
+        StrASCII := '[A] ' + StrASCII;
+      end;
+      if isShowMode and (StrHEX <> '') then begin
+        StrHEX := '[H] ' + StrHEX;
+      end;
+      if isShowMode and (StrDEC <> '') then begin
+        StrDEC := '[D] ' + StrDEC;
+      end;
+      if isShowMode and (StrCUST <> '') then begin
+        StrCUST := '[C] ' + StrCUST;
+      end;
+    end;
+    if isADDRX and isRx then begin
+      if isShowMode and (StrASCII <> '') then begin
+        StrASCII := '[A] ' + StrASCII;
+      end;
+      if isShowMode and (StrHEX <> '') then begin
+        StrHEX := '[H] ' + StrHEX;
+      end;
+      if isShowMode and (StrDEC <> '') then begin
+        StrDEC := '[D] ' + StrDEC;
+      end;
+      if isShowMode and (StrCUST <> '') then begin
+        StrCUST := '[C] ' + StrCUST;
+      end;
+    end;
+  end;
+
+  if ((isADDRX and isRx) or (isADDTX and not isRx)) and (isAddIgnFlt or isOutLog) then begin
+    CMainWindowAdd.SelAttributes.Color := ColorText;
+    if StrASCII <> '' then begin
       CMainWindowAdd.SelAttributes.Color := ColorText;
-      if StrASCII <> '' then
-        begin
-          CMainWindowAdd.SelAttributes.Color := ColorText;
-          CMainWindowAdd.Lines.Add(BeginStr + StrASCII);
-        end;
-
-      if StrHEX   <> '' then
-        begin
-          CMainWindowAdd.SelAttributes.Color := ColorText;
-          CMainWindowAdd.Lines.Add(BeginStr + StrHEX);
-        end;
-
-      if StrDEC   <> '' then
-        begin
-          CMainWindowAdd.SelAttributes.Color := ColorText;
-          CMainWindowAdd.Lines.Add(BeginStr + StrDEC);
-        end;
-
-      if StrCUST   <> '' then
-        begin
-          CMainWindowAdd.SelAttributes.Color := ColorText;
-          CMainWindowAdd.Lines.Add(BeginStr + StrCUST);
-        end;
-
-      CntBytesAdd := CntBytesAdd + Length(BeginStr + StrASCII) +
-                                   Length(BeginStr + StrHEX) +
-                                   Length(BeginStr + StrDEC) +
-                                   Length(BeginStr + StrCUST);
-      StrASCII := '';
-      StrHEX := '';
-      StrDEC := '';
-      StrCUST := '';
+      CMainWindowAdd.Lines.Add(BeginStr + StrASCII);
     end;
 
-  if isOutLog then
-    begin
-      CMainWindow.SelAttributes.Color := ColorText;
-      CMainWindow.Lines.Add(BeginStr + LogStr);
-      CntDataLog := CntDataLog + length(BeginStr + LogStr);
-      if isLogFile and ((isRx and isLogTextRx) or (not isRx and isLogTextTx)) then
-        begin
-          if not isSaveDelay then
-            WriteLn(LogFile, BeginStr + LogStr)
-          else
-            begin
-              DeltaMS := MilliSecondsBetween(LastReadLogTime, DT);
+    if StrHEX <> '' then begin
+      CMainWindowAdd.SelAttributes.Color := ColorText;
+      CMainWindowAdd.Lines.Add(BeginStr + StrHEX);
+    end;
 
-              if (DeltaMS < 1000000000) and (DeltaMS >= 0) then
-                begin
-                  if DeltaMS > 99999999 then DeltaMS := 99999999;
+    if StrDEC <> '' then begin
+      CMainWindowAdd.SelAttributes.Color := ColorText;
+      CMainWindowAdd.Lines.Add(BeginStr + StrDEC);
+    end;
 
-                  WriteLn(LogFile,  '[delay:]' + intToStr(DeltaMS) );
+    if StrCUST <> '' then begin
+      CMainWindowAdd.SelAttributes.Color := ColorText;
+      CMainWindowAdd.Lines.Add(BeginStr + StrCUST);
+    end;
 
-                end;
-              LastReadLogTime := DT;
-              WriteLn(LogFile, LogStr);
-            end;
+    CntBytesAdd := CntBytesAdd + Length(BeginStr + StrASCII) + Length(BeginStr + StrHEX) + Length(BeginStr + StrDEC) +
+      Length(BeginStr + StrCUST);
+    StrASCII := '';
+    StrHEX := '';
+    StrDEC := '';
+    StrCUST := '';
+  end;
+
+  if isOutLog then begin
+    CMainWindow.SelAttributes.Color := ColorText;
+    MyLineAddToMemo(BeginStr + LogStr); //CMainWindow.Lines.Add(BeginStr + LogStr);
+    CntDataLog := CntDataLog + length(BeginStr + LogStr);
+    if isLogFile and ((isRx and isLogTextRx) or (not isRx and isLogTextTx)) then begin
+      if not isSaveDelay then begin
+        WriteLn(LogFile, BeginStr + LogStr);
+      end else begin
+        DeltaMS := MilliSecondsBetween(LastReadLogTime, DT);
+
+        if (DeltaMS < 1000000000) and (DeltaMS >= 0) then begin
+          if DeltaMS > 99999999 then begin
+            DeltaMS := 99999999;
+          end;
+
+          WriteLn(LogFile, '[delay:]' + IntToStr(DeltaMS));
+
         end;
+        LastReadLogTime := DT;
+        WriteLn(LogFile, LogStr);
+      end;
     end;
+  end;
 
-  if isPauseLog then
-    begin
-       PauseLog;
-    end;
+  if isPauseLog then begin
+    PauseLog;
+  end;
 end;
-
 
 
 procedure TForm1.NoClose;
@@ -12201,6 +12183,48 @@ begin
       StartLog.Caption := 'Stop Log';
     end
   else STLog.Color := Form1.Color;    
+end;
+
+procedure TForm1.chkAutoScrollOffClick(Sender: TObject);
+begin
+  isAutoScrollOff := (Sender as TCheckBox).Checked;
+  if not isAutoScrollOff then begin
+    CMainWindow.SelStart := Length(CMainWindow.Text);
+    CMainWindow.SelLength := 0;
+    CMainWindow.Perform(EM_SCROLLCARET, 0, 0);
+  end;
+end;
+
+
+procedure TForm1.MyLineAddToMemo(const S: string);
+var
+  FirstVis: Integer;
+  RE: TRichEdit;
+begin
+  RE := CMainWindow;
+
+  if isAutoScrollOff then
+  begin
+    FirstVis := RE.Perform(EM_GETFIRSTVISIBLELINE, 0, 0);
+
+    LockWindowUpdate(RE.Handle);
+    try
+      RE.Lines.Add(S);
+    finally
+      LockWindowUpdate(0);
+    end;
+
+    RE.Perform(EM_LINESCROLL, 0,
+      FirstVis - RE.Perform(EM_GETFIRSTVISIBLELINE, 0, 0));
+
+    // ??? ???????? ??? ?????????
+    RE.Invalidate;
+    UpdateWindow(RE.Handle);
+  end
+  else
+  begin
+    RE.Lines.Add(S);
+  end;
 end;
 
 end.

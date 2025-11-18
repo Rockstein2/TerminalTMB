@@ -13,7 +13,7 @@ object Form1: TForm1
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = True
-  Position = poDesktopCenter
+  Position = poScreenCenter
   OnCanResize = FormCanResize
   OnClose = FormClose
   OnCreate = FormCreate
@@ -25,17 +25,423 @@ object Form1: TForm1
     726)
   PixelsPerInch = 96
   TextHeight = 13
+  object CMainWindow: TRichEdit
+    Left = 5
+    Top = 35
+    Width = 937
+    Height = 391
+    Anchors = [akLeft, akTop, akBottom]
+    Ctl3D = True
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Consolas'
+    Font.Style = []
+    Lines.Strings = (
+      'Close the program window to cancel automatic position changes'
+      
+        '???????? ???? ????????? ??? ?????? ??????????????? ????????? ???' +
+        '??????'
+      '')
+    ParentCtl3D = False
+    ParentFont = False
+    ReadOnly = True
+    ScrollBars = ssVertical
+    TabOrder = 5
+    OnKeyPress = CMainWindowKeyPress
+    OnMouseDown = CMainWindowMouseDown
+    OnMouseMove = CMainWindowMouseMove
+  end
+  object SecondWindow: TMemo
+    Left = 6
+    Top = 35
+    Width = 937
+    Height = 391
+    Hint = 'Dual click toggles Window Mode'
+    Anchors = [akLeft, akTop, akBottom]
+    Color = clInfoBk
+    Ctl3D = False
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Consolas'
+    Font.Style = []
+    Lines.Strings = (
+      'SecondWindow')
+    ParentCtl3D = False
+    ParentFont = False
+    ParentShowHint = False
+    ScrollBars = ssVertical
+    ShowHint = True
+    TabOrder = 2
+    Visible = False
+    OnClick = SecondWindowClick
+    OnDblClick = SecondWindowDblClick
+    OnMouseMove = SecondWindowMouseMove
+  end
+  object ConnOpt: TPanel
+    Left = 6
+    Top = 35
+    Width = 409
+    Height = 113
+    TabOrder = 6
+    Visible = False
+    object ComPort: TComboBox
+      Left = 2
+      Top = 4
+      Width = 97
+      Height = 21
+      Hint = 'Port'
+      Style = csDropDownList
+      Ctl3D = False
+      ItemHeight = 13
+      ParentCtl3D = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
+      OnChange = ComPortChange
+    end
+    object BaudRate: TComboBox
+      Left = 100
+      Top = 4
+      Width = 77
+      Height = 21
+      Hint = 'BaudRate'
+      Ctl3D = False
+      ItemHeight = 13
+      ParentCtl3D = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+      Text = '1200'
+      OnClick = BaudRateClick
+      OnKeyPress = BaudRateKeyPress
+      Items.Strings = (
+        '1200'
+        '2400'
+        '4800'
+        '9600'
+        '19200'
+        '38400'
+        '57600'
+        '115200'
+        '230400'
+        '460800'
+        '921600'
+        '1843200')
+    end
+    object ComBits: TComboBox
+      Left = 178
+      Top = 4
+      Width = 37
+      Height = 21
+      Hint = 'Bits'
+      Style = csDropDownList
+      Ctl3D = False
+      ItemHeight = 13
+      ItemIndex = 3
+      ParentCtl3D = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 2
+      Text = '8'
+      Items.Strings = (
+        '5'
+        '6'
+        '7'
+        '8')
+    end
+    object ComStopBits: TComboBox
+      Left = 282
+      Top = 4
+      Width = 45
+      Height = 21
+      Hint = 'StopBit'
+      Style = csDropDownList
+      Ctl3D = False
+      ItemHeight = 13
+      ItemIndex = 0
+      ParentCtl3D = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 3
+      Text = '1'
+      Items.Strings = (
+        '1'
+        '1,5'
+        '2')
+    end
+    object AutoConnect: TCheckBox
+      Left = 2
+      Top = 28
+      Width = 319
+      Height = 17
+      Hint = 'AutoConnect'
+      Caption = 'Auto connect when the port is restored (relevant for USB-COM)'
+      Ctl3D = False
+      ParentCtl3D = False
+      ParentShowHint = False
+      ShowHint = False
+      TabOrder = 4
+      OnClick = AutoConnectClick
+      OnMouseMove = AutoConnectMouseMove
+    end
+    object ParityBox: TComboBox
+      Left = 216
+      Top = 4
+      Width = 65
+      Height = 21
+      Hint = 'Parity check '
+      Style = csDropDownList
+      ItemHeight = 13
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 5
+      OnChange = ParityBoxChange
+      Items.Strings = (
+        'NO'
+        'ODD'
+        'EVEN'
+        'MARK'
+        'SPACE')
+    end
+    object ChAconnPort: TCheckBox
+      Left = 2
+      Top = 44
+      Width = 315
+      Height = 17
+      Caption = 'Auto connect to the last port when starting the program'
+      TabOrder = 6
+      OnClick = ChAconnPortClick
+    end
+    object grp6: TGroupBox
+      Left = 2
+      Top = 62
+      Width = 403
+      Height = 45
+      Caption = 'Actions on bytes'
+      TabOrder = 7
+      object ChInv: TCheckBox
+        Left = 8
+        Top = 18
+        Width = 125
+        Height = 17
+        Caption = 'Inverting every bit'
+        TabOrder = 0
+        OnClick = ChInvClick
+      end
+      object Chchk2: TCheckBox
+        Left = 130
+        Top = 18
+        Width = 119
+        Height = 17
+        Caption = 'Reverse every byte'
+        TabOrder = 1
+        OnClick = Chchk2Click
+      end
+    end
+    object cbbHandsHaking: TComboBox
+      Left = 328
+      Top = 4
+      Width = 77
+      Height = 21
+      Hint = 'HandsHaking'
+      Style = csDropDownList
+      ItemHeight = 13
+      ItemIndex = 0
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 8
+      Text = 'None'
+      OnChange = cbbHandsHakingChange
+      Items.Strings = (
+        'None'
+        'RTC/CTS')
+    end
+  end
+  object SelTerm: TPanel
+    Left = 5
+    Top = 35
+    Width = 573
+    Height = 81
+    TabOrder = 31
+    Visible = False
+    DesignSize = (
+      573
+      81)
+    object ListInc: TButton
+      Left = 499
+      Top = 42
+      Width = 66
+      Height = 32
+      Hint = 'Next listing'
+      Anchors = []
+      Caption = '>>>'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -19
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 2
+      OnClick = ListIncClick
+      OnMouseMove = ListIncMouseMove
+    end
+    object CBLists: TComboBox
+      Left = 6
+      Top = 6
+      Width = 561
+      Height = 31
+      Style = csOwnerDrawFixed
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ItemHeight = 25
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = False
+      TabOrder = 0
+      OnClick = CBListsClick
+      OnDblClick = CBListsDblClick
+    end
+    object ListDec: TButton
+      Left = 434
+      Top = 42
+      Width = 66
+      Height = 32
+      Hint = 'Previous listing '
+      Anchors = []
+      Caption = '<<<'
+      Enabled = False
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -19
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 1
+      OnClick = ListDecClick
+      OnMouseMove = ListDecMouseMove
+    end
+    object grp12: TGroupBox
+      Left = 6
+      Top = 38
+      Width = 423
+      Height = 37
+      TabOrder = 3
+      DesignSize = (
+        423
+        37)
+      object rb1: TRadioButton
+        Left = 8
+        Top = 12
+        Width = 115
+        Height = 17
+        Caption = 'Allow these actions:'
+        TabOrder = 0
+        OnClick = rb1Click
+      end
+      object DelList: TButton
+        Left = 126
+        Top = 10
+        Width = 97
+        Height = 21
+        Hint = 'Reset this set of terminal settings and clear the macro list'
+        Anchors = [akBottom]
+        Caption = 'Reset settings'
+        Enabled = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 1
+        OnClick = DelListClick
+        OnMouseMove = DelListMouseMove
+      end
+      object BtCopyList: TButton
+        Left = 222
+        Top = 10
+        Width = 97
+        Height = 21
+        Hint = 'Copy this set of terminal settings and macro list'
+        Caption = 'Copy settings'
+        Enabled = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 2
+        OnClick = BtCopyListClick
+      end
+      object BtPasteList: TButton
+        Left = 318
+        Top = 10
+        Width = 97
+        Height = 21
+        Hint = 'Paste this set of terminal settings and macro list'
+        Caption = 'Paste settings'
+        Enabled = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 3
+        OnClick = BtPasteListClick
+      end
+    end
+  end
+  object CMainWindowAdd: TRichEdit
+    Left = 468
+    Top = 35
+    Width = 473
+    Height = 391
+    Anchors = [akLeft, akTop, akBottom]
+    Ctl3D = True
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Consolas'
+    Font.Style = []
+    Lines.Strings = (
+      'CMainWindowAdd')
+    ParentCtl3D = False
+    ParentFont = False
+    ReadOnly = True
+    ScrollBars = ssVertical
+    TabOrder = 7
+    Visible = False
+    OnMouseDown = CMainWindowAddMouseDown
+  end
+  object SecondWindowAdd: TMemo
+    Left = 470
+    Top = 35
+    Width = 473
+    Height = 391
+    Anchors = [akLeft, akTop, akBottom]
+    Color = clInfoBk
+    Ctl3D = False
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Consolas'
+    Font.Style = []
+    Lines.Strings = (
+      'SecondWindowAdd')
+    ParentCtl3D = False
+    ParentFont = False
+    ScrollBars = ssVertical
+    TabOrder = 4
+    Visible = False
+    OnChange = SecondWindowAddChange
+    OnClick = SecondWindowAddClick
+  end
   object Panel1: TPanel
     Left = 5
     Top = 2
     Width = 943
-    Height = 25
+    Height = 33
     TabOrder = 0
     OnMouseMove = Panel1MouseMove
     object BTConnect: TButton
       Left = 66
       Top = 0
-      Width = 65
+      Width = 63
       Height = 25
       Hint = 'Connect/Disconnect'
       Caption = 'Connect'
@@ -46,7 +452,7 @@ object Form1: TForm1
       OnMouseMove = BTConnectMouseMove
     end
     object FiltrLog: TEdit
-      Left = 328
+      Left = 308
       Top = 2
       Width = 79
       Height = 21
@@ -69,9 +475,9 @@ object Form1: TForm1
       OnMouseMove = FiltrLogMouseMove
     end
     object BtOptConn: TButton
-      Left = 130
+      Left = 129
       Top = 0
-      Width = 65
+      Width = 57
       Height = 25
       Caption = 'Port'
       ParentShowHint = False
@@ -125,23 +531,29 @@ object Form1: TForm1
       OnClick = BtInfoClick
     end
     object AScroll: TCheckBox
-      Left = 500
-      Top = 4
-      Width = 74
-      Height = 17
+      Left = 472
+      Top = 3
+      Width = 111
+      Height = 11
       Hint = 
         'Preventing duplicate incoming packets from being displayed in th' +
         'e log window'
-      Caption = 'Skip Reps'
+      Caption = 'Skip same repls'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -8
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
       ParentShowHint = False
       ShowHint = True
       TabOrder = 7
       OnClick = AScrollClick
     end
     object sendAnsBTBTLog: TButton
-      Left = 196
+      Left = 186
       Top = 0
-      Width = 65
+      Width = 61
       Height = 25
       Hint = 'Clear Log'
       Caption = 'Clear log'
@@ -151,9 +563,9 @@ object Form1: TForm1
       OnClick = sendAnsBTBTLogClick
     end
     object sendAnsBTStartStop: TButton
-      Left = 575
+      Left = 584
       Top = 0
-      Width = 29
+      Width = 20
       Height = 25
       Hint = 'Start/Stop logout'
       Caption = '||'
@@ -169,9 +581,9 @@ object Form1: TForm1
       OnClick = sendAnsBTStartStopClick
     end
     object Bt1: TButton
-      Left = 260
+      Left = 247
       Top = 0
-      Width = 65
+      Width = 59
       Height = 25
       Hint = 'Copy the contents of the main log window to the clipboard'
       Caption = 'Copy log'
@@ -181,9 +593,9 @@ object Form1: TForm1
       OnClick = Bt1Click
     end
     object cbbFilterLOg: TComboBox
-      Left = 408
+      Left = 388
       Top = 2
-      Width = 85
+      Width = 81
       Height = 21
       Style = csDropDownList
       Font.Charset = DEFAULT_CHARSET
@@ -208,15 +620,33 @@ object Form1: TForm1
       Top = 0
       Width = 65
       Height = 25
-      Caption = 'Pre-settings'
+      Caption = 'Terminals'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      Font.Style = []
+      Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 12
       OnClick = Bt22Click
+    end
+    object chkAutoScrollOff: TCheckBox
+      Left = 472
+      Top = 15
+      Width = 105
+      Height = 17
+      Hint = 'Preventing from scrolling if new data added to the main window'
+      Caption = 'NoAutoScroll'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -8
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 13
+      OnClick = chkAutoScrollOffClick
     end
   end
   object MainPanel: TPanel
@@ -260,7 +690,7 @@ object Form1: TForm1
       Top = 4
       Width = 623
       Height = 21
-      Hint = #1050#1086#1084#1072#1085#1076#1085#1072#1103' '#1089#1090#1088#1086#1082#1072
+      Hint = '????????? ??????'
       Anchors = [akLeft, akBottom]
       Ctl3D = False
       Font.Charset = RUSSIAN_CHARSET
@@ -568,7 +998,7 @@ object Form1: TForm1
         Top = 8
         Width = 31
         Height = 13
-        Hint = #1063#1080#1089#1083#1086' '#1086#1090#1087#1088#1072#1074#1083#1077#1085#1085#1099#1093' '#1087#1072#1082#1077#1090#1086#1074' '#1089' '#1091#1095#1105#1090#1086#1084' '#1085#1072#1089#1090#1088#1086#1077#1082' '#1092#1080#1083#1100#1090#1088#1072
+        Hint = '????? ???????????? ??????? ? ?????? ???????? ???????'
         Caption = 'LSend'
         ParentShowHint = False
         ShowHint = True
@@ -578,7 +1008,7 @@ object Form1: TForm1
         Top = 24
         Width = 32
         Height = 13
-        Hint = #1063#1080#1089#1083#1086' '#1087#1088#1080#1085#1103#1090#1099#1093' '#1087#1072#1082#1077#1090#1086#1074' '#1089' '#1091#1095#1105#1090#1086#1084' '#1085#1072#1089#1090#1088#1086#1077#1082' '#1092#1080#1083#1100#1090#1088#1072
+        Hint = '????? ???????? ??????? ? ?????? ???????? ???????'
         Caption = 'LRead'
         ParentShowHint = False
         ShowHint = True
@@ -588,7 +1018,7 @@ object Form1: TForm1
         Top = 8
         Width = 62
         Height = 13
-        Hint = #1052#1080#1085#1080#1084#1072#1083#1100#1085#1086#1077' '#1074#1088#1077#1084#1103' '#1084#1077#1078#1076#1091' '#1087#1088#1080#1085#1103#1090#1099#1084#1080' '#1087#1072#1082#1077#1090#1072#1084#1080
+        Hint = '??????????? ????? ????? ????????? ????????'
         Caption = 'MinTimeWait'
         ParentShowHint = False
         ShowHint = True
@@ -598,7 +1028,7 @@ object Form1: TForm1
         Top = 24
         Width = 65
         Height = 13
-        Hint = #1052#1072#1082#1089#1080#1084#1072#1083#1100#1085#1086#1077' '#1074#1088#1077#1084#1103' '#1084#1077#1078#1076#1091' '#1087#1088#1080#1085#1103#1090#1099#1084#1080' '#1087#1072#1082#1077#1090#1072#1084#1080
+        Hint = '???????????? ????? ????? ????????? ????????'
         Caption = 'MaxTimeWait'
         ParentShowHint = False
         ShowHint = True
@@ -615,7 +1045,7 @@ object Form1: TForm1
         Top = 40
         Width = 60
         Height = 13
-        Hint = #1057#1095#1105#1090#1095#1080#1082' '#1085#1072#1081#1076#1077#1085#1085#1099#1093' '#1092#1088#1072#1075#1084#1077#1090#1086#1074' '#1080#1079' '#1086#1082#1085#1072' '#1092#1080#1083#1100#1090#1088#1072
+        Hint = '??????? ????????? ????????? ?? ???? ???????'
         Caption = 'Match cnt: 0'
         ParentShowHint = False
         ShowHint = True
@@ -632,7 +1062,7 @@ object Form1: TForm1
         Top = 2
         Width = 13
         Height = 19
-        Hint = #1054#1073#1085#1091#1083#1080#1090#1100' '#1089#1090#1072#1090#1080#1089#1090#1080#1082#1091
+        Hint = '???????? ??????????'
         Caption = 'R'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -3950,33 +4380,6 @@ object Form1: TForm1
       TabOrder = 39
     end
   end
-  object SecondWindow: TMemo
-    Left = 6
-    Top = 28
-    Width = 937
-    Height = 399
-    Hint = 'Dual click toggles Window Mode'
-    Anchors = [akLeft, akTop, akBottom]
-    Color = clInfoBk
-    Ctl3D = False
-    Font.Charset = RUSSIAN_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Consolas'
-    Font.Style = []
-    Lines.Strings = (
-      'SecondWindow')
-    ParentCtl3D = False
-    ParentFont = False
-    ParentShowHint = False
-    ScrollBars = ssVertical
-    ShowHint = True
-    TabOrder = 2
-    Visible = False
-    OnClick = SecondWindowClick
-    OnDblClick = SecondWindowDblClick
-    OnMouseMove = SecondWindowMouseMove
-  end
   object LogPanel: TPanel
     Left = 5
     Top = 428
@@ -4215,258 +4618,6 @@ object Form1: TForm1
       OnMouseMove = ChHKMouseMove
     end
   end
-  object SecondWindowAdd: TMemo
-    Left = 470
-    Top = 28
-    Width = 473
-    Height = 399
-    Anchors = [akLeft, akTop, akBottom]
-    Color = clInfoBk
-    Ctl3D = False
-    Font.Charset = RUSSIAN_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Consolas'
-    Font.Style = []
-    Lines.Strings = (
-      'SecondWindowAdd')
-    ParentCtl3D = False
-    ParentFont = False
-    ScrollBars = ssVertical
-    TabOrder = 4
-    Visible = False
-    OnChange = SecondWindowAddChange
-    OnClick = SecondWindowAddClick
-  end
-  object CMainWindow: TRichEdit
-    Left = 5
-    Top = 28
-    Width = 937
-    Height = 399
-    Anchors = [akLeft, akTop, akBottom]
-    Ctl3D = True
-    Font.Charset = RUSSIAN_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Consolas'
-    Font.Style = []
-    Lines.Strings = (
-      'Close the program window to cancel automatic position changes'
-      
-        #1047#1072#1082#1088#1086#1081#1090#1077' '#1086#1082#1085#1086' '#1087#1088#1086#1075#1088#1072#1084#1084#1099' '#1076#1083#1103' '#1086#1090#1084#1077#1085#1099' '#1072#1074#1090#1086#1084#1072#1090#1080#1095#1077#1089#1082#1086#1075#1086' '#1080#1079#1084#1077#1085#1077#1085#1080#1103' '#1087#1086#1083 +
-        #1086#1078#1077#1085#1080#1103
-      '')
-    ParentCtl3D = False
-    ParentFont = False
-    ReadOnly = True
-    ScrollBars = ssVertical
-    TabOrder = 5
-    OnKeyPress = CMainWindowKeyPress
-    OnMouseDown = CMainWindowMouseDown
-    OnMouseMove = CMainWindowMouseMove
-  end
-  object ConnOpt: TPanel
-    Left = 6
-    Top = 26
-    Width = 409
-    Height = 113
-    TabOrder = 6
-    Visible = False
-    object ComPort: TComboBox
-      Left = 2
-      Top = 4
-      Width = 97
-      Height = 21
-      Hint = 'Port'
-      Style = csDropDownList
-      Ctl3D = False
-      ItemHeight = 13
-      ParentCtl3D = False
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 0
-      OnChange = ComPortChange
-    end
-    object BaudRate: TComboBox
-      Left = 100
-      Top = 4
-      Width = 77
-      Height = 21
-      Hint = 'BaudRate'
-      Ctl3D = False
-      ItemHeight = 13
-      ParentCtl3D = False
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 1
-      Text = '1200'
-      OnClick = BaudRateClick
-      OnKeyPress = BaudRateKeyPress
-      Items.Strings = (
-        '1200'
-        '2400'
-        '4800'
-        '9600'
-        '19200'
-        '38400'
-        '57600'
-        '115200'
-        '230400'
-        '460800'
-        '921600'
-        '1843200')
-    end
-    object ComBits: TComboBox
-      Left = 178
-      Top = 4
-      Width = 37
-      Height = 21
-      Hint = 'Bits'
-      Style = csDropDownList
-      Ctl3D = False
-      ItemHeight = 13
-      ItemIndex = 3
-      ParentCtl3D = False
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 2
-      Text = '8'
-      Items.Strings = (
-        '5'
-        '6'
-        '7'
-        '8')
-    end
-    object ComStopBits: TComboBox
-      Left = 282
-      Top = 4
-      Width = 45
-      Height = 21
-      Hint = 'StopBit'
-      Style = csDropDownList
-      Ctl3D = False
-      ItemHeight = 13
-      ItemIndex = 0
-      ParentCtl3D = False
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 3
-      Text = '1'
-      Items.Strings = (
-        '1'
-        '1,5'
-        '2')
-    end
-    object AutoConnect: TCheckBox
-      Left = 2
-      Top = 28
-      Width = 319
-      Height = 17
-      Hint = 'AutoConnect'
-      Caption = 'Auto connect when the port is restored (relevant for USB-COM)'
-      Ctl3D = False
-      ParentCtl3D = False
-      ParentShowHint = False
-      ShowHint = False
-      TabOrder = 4
-      OnClick = AutoConnectClick
-      OnMouseMove = AutoConnectMouseMove
-    end
-    object ParityBox: TComboBox
-      Left = 216
-      Top = 4
-      Width = 65
-      Height = 21
-      Hint = 'Parity check '
-      Style = csDropDownList
-      ItemHeight = 13
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 5
-      OnChange = ParityBoxChange
-      Items.Strings = (
-        'NO'
-        'ODD'
-        'EVEN'
-        'MARK'
-        'SPACE')
-    end
-    object ChAconnPort: TCheckBox
-      Left = 2
-      Top = 44
-      Width = 315
-      Height = 17
-      Caption = 'Auto connect to the last port when starting the program'
-      TabOrder = 6
-      OnClick = ChAconnPortClick
-    end
-    object grp6: TGroupBox
-      Left = 2
-      Top = 62
-      Width = 403
-      Height = 45
-      Caption = 'Actions on bytes'
-      TabOrder = 7
-      object ChInv: TCheckBox
-        Left = 8
-        Top = 18
-        Width = 125
-        Height = 17
-        Caption = 'Inverting every bit'
-        TabOrder = 0
-        OnClick = ChInvClick
-      end
-      object Chchk2: TCheckBox
-        Left = 130
-        Top = 18
-        Width = 119
-        Height = 17
-        Caption = 'Reverse every byte'
-        TabOrder = 1
-        OnClick = Chchk2Click
-      end
-    end
-    object cbbHandsHaking: TComboBox
-      Left = 328
-      Top = 4
-      Width = 77
-      Height = 21
-      Hint = 'HandsHaking'
-      Style = csDropDownList
-      ItemHeight = 13
-      ItemIndex = 0
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 8
-      Text = 'None'
-      OnChange = cbbHandsHakingChange
-      Items.Strings = (
-        'None'
-        'RTC/CTS')
-    end
-  end
-  object CMainWindowAdd: TRichEdit
-    Left = 468
-    Top = 28
-    Width = 473
-    Height = 399
-    Anchors = [akLeft, akTop, akBottom]
-    Ctl3D = True
-    Font.Charset = RUSSIAN_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Consolas'
-    Font.Style = []
-    Lines.Strings = (
-      'CMainWindowAdd')
-    ParentCtl3D = False
-    ParentFont = False
-    ReadOnly = True
-    ScrollBars = ssVertical
-    TabOrder = 7
-    Visible = False
-    OnMouseDown = CMainWindowAddMouseDown
-  end
   object pnlAddWin: TPanel
     Left = 710
     Top = 84
@@ -4607,9 +4758,9 @@ object Form1: TForm1
   end
   object pnlSep: TPanel
     Left = 20
-    Top = 142
+    Top = 149
     Width = 895
-    Height = 285
+    Height = 277
     TabOrder = 9
     Visible = False
     object grpLineSeparator: TGroupBox
@@ -5715,7 +5866,7 @@ object Form1: TForm1
     end
     object grpEventLog: TGroupBox
       Left = 316
-      Top = 228
+      Top = 220
       Width = 285
       Height = 55
       Caption = 'Event log'
@@ -6053,133 +6204,6 @@ object Form1: TForm1
     Enabled = False
     TabOrder = 30
     Visible = False
-  end
-  object SelTerm: TPanel
-    Left = 5
-    Top = 26
-    Width = 573
-    Height = 81
-    TabOrder = 31
-    Visible = False
-    DesignSize = (
-      573
-      81)
-    object CBLists: TComboBox
-      Left = 6
-      Top = 6
-      Width = 561
-      Height = 31
-      Style = csOwnerDrawFixed
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -20
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ItemHeight = 25
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = False
-      TabOrder = 0
-      OnClick = CBListsClick
-      OnDblClick = CBListsDblClick
-    end
-    object ListDec: TButton
-      Left = 434
-      Top = 42
-      Width = 66
-      Height = 32
-      Hint = 'Previous listing '
-      Anchors = []
-      Caption = '<<<'
-      Enabled = False
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -19
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-      TabOrder = 1
-      OnClick = ListDecClick
-      OnMouseMove = ListDecMouseMove
-    end
-    object ListInc: TButton
-      Left = 499
-      Top = 42
-      Width = 66
-      Height = 32
-      Hint = 'Next listing'
-      Anchors = []
-      Caption = '>>>'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -19
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-      TabOrder = 2
-      OnClick = ListIncClick
-      OnMouseMove = ListIncMouseMove
-    end
-    object grp12: TGroupBox
-      Left = 6
-      Top = 38
-      Width = 423
-      Height = 37
-      TabOrder = 3
-      DesignSize = (
-        423
-        37)
-      object rb1: TRadioButton
-        Left = 8
-        Top = 12
-        Width = 115
-        Height = 17
-        Caption = 'Allow these actions:'
-        TabOrder = 0
-        OnClick = rb1Click
-      end
-      object DelList: TButton
-        Left = 126
-        Top = 10
-        Width = 97
-        Height = 21
-        Hint = 'Reset this set of terminal settings and clear the macro list'
-        Anchors = [akBottom]
-        Caption = 'Reset settings'
-        Enabled = False
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 1
-        OnClick = DelListClick
-        OnMouseMove = DelListMouseMove
-      end
-      object BtCopyList: TButton
-        Left = 222
-        Top = 10
-        Width = 97
-        Height = 21
-        Hint = 'Copy this set of terminal settings and macro list'
-        Caption = 'Copy settings'
-        Enabled = False
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 2
-        OnClick = BtCopyListClick
-      end
-      object BtPasteList: TButton
-        Left = 318
-        Top = 10
-        Width = 97
-        Height = 21
-        Hint = 'Paste this set of terminal settings and macro list'
-        Caption = 'Paste settings'
-        Enabled = False
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 3
-        OnClick = BtPasteListClick
-      end
-    end
   end
   object CheckConnect: TTimer
     OnTimer = CheckConnectTimer
