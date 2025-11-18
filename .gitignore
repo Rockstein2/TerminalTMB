@@ -1,3 +1,10 @@
 *.dcu
+*.dsk
+*.ddp
+
 *.exe
+*.bak
 *.
+**.~*
+**/*heap.trc
+**/bin
