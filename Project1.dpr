@@ -52,6 +52,7 @@ uses
 
 begin
   Application.Initialize;
+  Application.Title := 'TerminalTMB';
   Application.CreateForm(TForm1, Form1);
   Application.CreateForm(TFormEditHelpCmd, FormEditHelpCmd);
   Application.CreateForm(TInfo, Info);
