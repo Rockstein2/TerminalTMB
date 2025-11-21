@@ -1713,6 +1713,58 @@ uses Unit2, Unit3, Unit4, Unit5, Unit6, Unit7, Unit9, DataSendLog_, Unit12,
 {$R *.dfm}
 
 
+procedure GetAppVersion(var VersionStr: String);
+var
+  Size, Handle: DWORD;
+  Buffer: Pointer;
+  Info: PVSFixedFileInfo;
+  Len: UINT;
+  Major, Minor, Release, Build: Word;
+  Flags: DWORD;
+  FlagList: string;
+  pcValue: PChar;
+  iLen: UINT;
+begin
+  VersionStr := '';
+
+  Size := GetFileVersionInfoSize(PChar(ParamStr(0)), Handle);
+  if Size = 0 then Exit;
+
+  GetMem(Buffer, Size);
+  try
+    if GetFileVersionInfo(PChar(ParamStr(0)), 0, Size, Buffer) then
+    begin
+      { -------- Numeric version + flags -------- }
+      if VerQueryValue(Buffer, '\', Pointer(Info), Len) then
+      begin
+        Major := HiWord(Info^.dwFileVersionMS);
+        Minor := LoWord(Info^.dwFileVersionMS);
+        Release := HiWord(Info^.dwFileVersionLS);
+        Build := LoWord(Info^.dwFileVersionLS);
+
+        Flags := Info^.dwFileFlags and Info^.dwFileFlagsMask;
+
+        FlagList := '';
+        if (Flags and VS_FF_PRERELEASE)   <> 0 then FlagList := FlagList + 'prerelease-';
+        if (Flags and VS_FF_DEBUG)        <> 0 then FlagList := FlagList + 'debug-';
+        if (Flags and VS_FF_PATCHED)      <> 0 then FlagList := FlagList + 'patched-';
+        if (Flags and VS_FF_PRIVATEBUILD) <> 0 then FlagList := FlagList + 'private-';
+        if (Flags and VS_FF_SPECIALBUILD) <> 0 then FlagList := FlagList + 'special-';
+
+        if FlagList <> '' then
+          SetLength(FlagList, Length(FlagList)-1);
+
+        VersionStr := Format('v%d.%d.%d.%d', [Major, Minor, Release, Build]);
+        if FlagList <> '' then
+          VersionStr := VersionStr + '-' + FlagList;
+      end;
+    end;
+  finally
+    FreeMem(Buffer);
+  end;
+end;
+
+
 procedure TForm1.WriteLogEvent(DateTime: TDateTime; Msg: string);
   begin
     if EventLog.Lines.Count > 1000 then EventLog.Clear;
@@ -2628,7 +2680,9 @@ var
   isCmdCfg_1 : Boolean;
   isCmdCfg_2 : Boolean;
 begin
-  VersionInfo := 'TerminalTMB v7.147b';
+//VersionInfo := 'TerminalTMB v7.147b';
+  GetAppVersion(VersionInfo);
+  VersionInfo := 'TerminalTMB '+VersionInfo;    
   DateInfo    := '09.10.2025';
   //URL         := 'https://zen.yandex.ru/tehnozet2';
   //DateInfo    := 'Em@il: Ivan160508@yandex.ru, MCard: 5586 2000 8623 2177';
