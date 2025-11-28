@@ -1432,6 +1432,7 @@ var
   StartFSmodeBT         : Integer;
   StartLeftOpenBinFile  : Integer;
   StartLeftAScroll      : Integer;
+  StartAutoScrollOff    : Integer;  
   StartLeftAddPanel     : Integer;
   StartPanelSeparator   : Integer;
   StartPosHotKey        : Integer;
@@ -2341,6 +2342,7 @@ begin
   Button50.Left       := StartBTOldCmd    + deltaWidth;
   btnBtShowStat.Left  := StartLeftSniffer + deltaWidth;
   AScroll.Left        := StartLeftAScroll + deltaWidth;
+  chkAutoScrollOff.Left := StartAutoScrollOff + deltaWidth;
   pnlAddWin.Left      := StartLeftAddPanel + deltaWidth;
   SendFilePause.Left  := PauseSendFile     + deltaWidth;
   pnlSep.Left         := StartPanelSeparator + deltaWidth;
@@ -2957,6 +2959,7 @@ begin
   StartLeftOpenBinFile := OpenBinBT.Left;
   StartWidthPanelCmd   := TabEditCmd.Width;
   StartLeftAScroll     := AScroll.Left;
+  StartAutoscrollOff   := chkAutoScrollOff.Left;
   StartLeftAddPanel    := pnlAddWin.Left;
   StartPanelSeparator  := pnlSep.Left;
   StartPosHotKey       := ChHK.Left;
